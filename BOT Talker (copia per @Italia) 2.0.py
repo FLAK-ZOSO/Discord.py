@@ -27,7 +27,7 @@ async def on_ready():
     await Bot.change_presence(status = discord.Status.idle, activity = game)
 
 @Bot.event
-async def on_mention(ctx):
+async def on_mention(ctx): #Quest'evento credo non esista...
     await ctx.send(Bot.user + Bot.user.id + " può risponderti col comando $Aiuto")
 
 @Bot.command()
@@ -47,7 +47,7 @@ async def Aiuto(ctx):
 async def Documentazione(ctx):
     area = ctx.message.channel
     await ctx.send(r"`D:\Python\Python\Python39\Python3.9.1 dal pc\BOT Talker (copia per @Italia) 2.0.py`")
-    await ctx.send('Invio dei file momentaneamente disabilitato')
+    await ctx.send('Invio dei file momentaneamente disabilitato') #Qui devo capire come fare per fargli allegare un file Python, in alternativa invierò un link verso questa pagina
 
 @Bot.command()
 async def Aiuto_Spam(ctx):
