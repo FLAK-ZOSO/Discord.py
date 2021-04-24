@@ -9,7 +9,7 @@ import webbrowser
 import asyncio
 
 print("Eseguendo il programma...")
-token = "ODI4MDA3ODc5MDY3MTcyODg1.YGjUbg.WXC9LRX1SZLvB16GFUuHmImfjY4" #Ovviamente token rigenerato più volte
+token = "ODI4MDA3ODc5MDY3MTcyODg1.YGjUbg.WXC9LRX1SZLvB16GFUuHmImfjY4" #token rigenerato più volte
 Bot = commands.Bot(command_prefix = "$")
 
 @Bot.event
@@ -20,7 +20,7 @@ parolacce = ['fanculo', 'merda', 'troia', "stronza", "stronzo", 'Stronzo', "Stro
 @Bot.event #Qui ci sarà l'elenco dei vari messaggi ai quali reagire
 async def on_message(messaggio):
     author = messaggio.author
-    if author != Bot.user:
+    if author != Bot.user and author.nick != 'Il Pensionato Sentenzioso':
         if  messaggio.content == '$FERMO':
             await quit()
         if 'Italia' in messaggio.content or 'ITALIA' in messaggio.content or 'italia' in messaggio.content or 'Italia#5030' in messaggio.content or '@Italia#5030' in messaggio.content:
