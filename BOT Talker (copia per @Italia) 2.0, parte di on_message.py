@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 from discord import client
+from discord import Member
 import time
 import webbrowser
 import asyncio
@@ -20,7 +21,8 @@ parolacce = ['fanculo', 'merda', 'troia', "stronza", "stronzo", 'Stronzo', "Stro
 @Bot.event #Qui ci sarà l'elenco dei vari messaggi ai quali reagire
 async def on_message(messaggio):
     author = messaggio.author
-    if author != Bot.user and author.nick != 'Il Pensionato Sentenzioso':
+    immuni = ['Il Pensionato Sentenzioso', 'Foldish']
+    if author != Bot.user and author.nick != 'Il Pensionato Sentenzioso' and author.nick != 'Foldish' and author.nick != 'FLAK-ZOSO' and author.nick != 'MAT':
         if  messaggio.content == '$FERMO':
             await quit()
         if 'Italia' in messaggio.content or 'ITALIA' in messaggio.content or 'italia' in messaggio.content or 'Italia#5030' in messaggio.content or '@Italia#5030' in messaggio.content:
