@@ -9,7 +9,7 @@ import webbrowser
 import asyncio
 
 print("Eseguendo il programma...")
-token = "ODI4MDA3ODc5MDY3MTcyODg1.YGjUbg.WXC9LRX1SZLvB16GFUuHmImfjY4"
+token = "ODI4MDA3ODc5MDY3MTcyODg1.YGjUbg.WXC9LRX1SZLvB16GFUuHmImfjY4" #Ovviamente token rigenerato più volte
 Bot = commands.Bot(command_prefix = "$")
 
 @Bot.event
