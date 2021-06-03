@@ -7,43 +7,29 @@ from discord.ext import commands
 from discord import client
 
 print("Papocchio.py")
-token = "ODQ5Njg5ODI0MjgxMTAwMzU4.YLe1UA.Wg29Lyl1yG_URtKScOU1vk7irXc"
-#intents = discord.Intents().all()
-#, intents = intents
-Bot = commands.Bot(command_prefix = "#", description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con #Documentazione")
-gioco = discord.Game("#Aiuto | Papocchio | @Papocchio#9166")
-
-@Bot.event
-async def on_ready():
-    print(Bot.user, " è ora online ", "ID: ", Bot.user.id)
-    await Bot.change_presence(status = discord.Status.idle, activity = gioco)
+token = ""
+intents = discord.Intents().all()
+Bot = commands.Bot(command_prefix = ")", description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con )Documentazione", intents = intents)
 
 #Comandi cazzoni e abbastanza inutili
 
 @Bot.command()
+@commands.has_role('nonciclopediano verificato')
 async def Casuale(ctx):
-    nonciclopedia = "https://nonciclopedia.org/wiki/Speciale:PaginaCasuale/"
-    wikipedia = "https://it.wikipedia.org/wiki/Speciale:PaginaCasuale/"
-    numero = randint(0, 30000)
-    if numero < 15000:
-        numero = str(numero)
-        Pagina_Casuale = str(nonciclopedia + numero)
-    elif numero > 14999:
-        numero = str(numero)
-        Pagina_Casuale = str(wikipedia + numero)
-    await ctx.message.delete()
-    await ctx.send(Pagina_Casuale)
-
-@Bot.command()
-async def Nonciclopedia(ctx):
     nonciclopedia = "https://nonciclopedia.org/wiki/Speciale:PaginaCasuale/"
     numero = randint(0, 15000)
     numero = str(numero)
     Pagina_Casuale = str(nonciclopedia + numero)
     await ctx.message.reply(Pagina_Casuale)
 
+@Bot.command()
+@commands.has_role('nonciclopediano verificato')
+async def Nonciclopedia(ctx, pagina):
+    nonciclopedia = "https://nonciclopedia.org/wiki/"
+    await ctx.message.reply(nonciclopedia + pagina)
+
 @Bot.command(description = "Comando per modificare il mio stato per un determinato arco di tempo.")
-@commands.has_role('Autorizzato a Talker')
+@commands.has_role('nonciclopediano rullatore')
 async def Cambia_stato(ctx, secondi, nuovo_stato):
     try:
         nuovo_stato = nuovo_stato.replace('-', ' ', 1000)
@@ -53,10 +39,11 @@ async def Cambia_stato(ctx, secondi, nuovo_stato):
         tempo = float(secondi)
         await sleep(tempo)
         await Bot.change_presence(status = discord.Status.idle, activity = gioco)
-    except discord.ext.commands.errors.MissingRole:
-        await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo Autorizzato a Talker")
+    except discord.errors.MissingRole:
+        await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo di nonciclopediano rullatore")
 
 @Bot.command()
+@commands.has_role('nonciclopediano verificato')
 async def Anonimo(ctx, member:discord.User = None, messaggio = None):
     await ctx.message.delete()
     messaggio = messaggio.replace('-', ' ', 100)
@@ -66,32 +53,99 @@ async def Anonimo(ctx, member:discord.User = None, messaggio = None):
     await author.send(f"Messaggio inviato a {member}, :white_check_mark: ")
     await author.send(f"Messaggio: {messaggio}")
 
+global offese
+offese = [" ce l'hai corto",  " tua madre si sta ancora pentendo del mancato aborto", " sei così brutto che se mai avrai una ragazza dovrà essere così miope da poterti scambiare per un rettile", " parli come un'aspirante Barbara d'Urso"]
 @Bot.command()
-async def Scrivi(ctx, *args):
+@commands.has_role('nonciclopediano verificato')
+async def Offendi(ctx, utente:discord.User):
+    try:
+        await ctx.channel.purge(limit = 1)
+        await ctx.send(f'{utente.mention},' + choice(offese))
+    except discord.ext.commands.errors.MissingRole:
+        await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo Diodesperado")
+
+@Bot.command()
+@commands.has_role('nonciclopediano verificato')
+async def Aggiungi_offesa(ctx, *args):
+    for parola in args:
+        offesa += parola
+    try:
+        offesa = offesa.replace("-", " ", 100)
+        offese.append(offesa)
+        print(f'({offesa}) è stata aggiunta alla lista offese')
+        await ctx.send((f"(***{offesa}***) è stata aggiunta alla lista offese"))
+    except discord.errors.MissingRole:
+        await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo di nonciclopediano verificato")
+
+@Bot.command()
+async def Scrivi(ctx, *parole):
     await ctx.message.delete()
     frase = str('')
-    for parola in args:
+    for parola in parole:
         parola += ' '
         frase += parola
     await ctx.send(frase)
 
+@Bot.command()
+async def Cancella(ctx, quantità:int):
+    await ctx.channel.purge(limit = quantità)
+    await ctx.send("Sono stati eliminati {quantità} messaggi per conto di {ctx.message.author.mention}!")
+
+@Bot.command()
+@commands.has_role('nonciclopediano verificato')
+async def Spam(ctx, ripetizioni:int, *parole):
+    await ctx.message.delete()
+    frase = str('')
+    for parola in parole:
+        parola += ' '
+        frase += parola
+    for i in range(ripetizioni):
+        await ctx.send(frase)
+    await ctx.send(f"Spam di {ripetizioni} messaggi effettuata per conto di {ctx.message.author.mention}")
+
+@Bot.command(description = "Decidi quante notifiche mandare per rompere il cazzo allo sfortunato di turno. Se non specificherai un numero allora sarò costretto a deciderlo io...")
+@commands.has_role('nonciclopediano picciotto')
+async def Importuna(ctx, utonto:discord.Member, ripetizioni = None, messaggio_privato = None):
+    await ctx.message.delete()
+    if (ripetizioni == None):
+        for i in range(randint(1, 10)):
+            await ctx.send(f"{utonto.mention}")
+        if (messaggio_privato == None):
+            return
+        else:
+            messaggio = messaggio_privato.replace('-', ' ', 10000)
+            await utonto.send(f"{utonto.mention}, {ctx.author} vuole che tu torni online, per cui ti ha lasciato questo messaggio: ")
+            await utonto.send(f"> *{messaggio}*")
+            return
+    ripetizioni = int(ripetizioni)
+    for i in range(ripetizioni):
+        await ctx.send(f"{utonto.mention}")
+    if (messaggio_privato == None):
+        return
+    else:
+        messaggio = messaggio = messaggio_privato.replace('-', ' ', 10000)
+        await utonto.send(f"{utonto.mention}, {ctx.author} vuole che tu torni online, per cui ti ha lasciato questo messaggio: ")
+        await utonto.send(f"> *{messaggio}*")
+        return
+
 #Comandi tattici per la gestione dei nonciclopediani
 
 @Bot.command()
-@commands.has_role('Diodesperado')
-async def Avvertimento(ctx, member:discord.User, reason = None):
+@commands.has_role('nonciclopediano rullatore')
+async def Avvertimento(ctx, utente:discord.User, motivo = None):
     try:
-        if reason == None:
-            await ctx.send('E per cosa lo staresti avvertendo?! Prova con `£Avvertimento {member} parole-del-tuo-avvertimento`')
+        if motivo == None:
+            await ctx.send('E per cosa lo staresti avvertendo?! Prova con `)Avvertimento {utente.mention} parole-del-tuo-avvertimento`')
         else:
-            reason = reason.replace('-', ' ', 100)
+            reason = motivo.replace('-', ' ', 100)
             author = ctx.message.author
-            await member.send(f"{member.mention}, la tua utenza è stata avvertita da {author}! Motivo: {reason}")
-            await ctx.channel.send(f"Avvertimento inviato a {member}")
+            await utente.send(f"{utente.mention}, la tua utenza è stata avvertita da {author}! Motivo: {reason}")
+            await ctx.channel.send(f"Avvertimento inviato a {utente.mention}")
     except discord.errors.Forbidden:
         await ctx.message.reply(f'{ctx.message.author.mention}, non ho il potere di farlo')
 
 @Bot.command()
+@commands.has_role('nonciclopediano amministratore')
 async def Calciorotazione(ctx, utente:discord.User, motivo = None):
     if (motivo != None):
         motivo = str(motivo.replace('-', ' ', 1000))
@@ -107,7 +161,8 @@ async def Calciorotazione(ctx, utente:discord.User, motivo = None):
         await utente.send(f"Sei stato espulso dal server perché così sbatteva a {ctx.message.author.nick}")
 
 @Bot.command(description = "Per dare un po' di tempo al ciccione di turno per lamentarsi dell'espulsione in avvicinamento. Inserire un tempo minimo di 15 secondi.")
-async def Calciorotazione_con_countdown(ctx, utente:discord.User, motivo = None, secondi = None, countdown = None):
+@commands.has_role('nonciclopediano amministratore')
+async def Calciorotazione_con_countdown(ctx, utente:discord.Member, motivo = None, offesa = None, secondi = None, countdown = None):
     if (secondi == None):
         await Calciorotazione(ctx, utente)
         return
@@ -115,20 +170,32 @@ async def Calciorotazione_con_countdown(ctx, utente:discord.User, motivo = None,
     countdown = bool(countdown)
     if (secondi != None and countdown):
         if (secondi < 15):
-            await ctx.message.reply(f"Scrivi `a`#help Calciorotazione_con_countdown`, forse capisci come mai ~~sei ritardato~~ il comando non ha funzionato.")
+            await ctx.message.reply(f"Scrivi `)help Calciorotazione_con_countdown`, forse capisci come mai ~~sei ritardato~~ il comando non ha funzionato.")
+            return
         await ctx.send(f"{utente.mention}, ti rimangono {str(secondi)} secondi da trascorrere in questo server.")
         await sleep(secondi-10)
         await ctx.send(f"{utente.mention}, ti rimangono 10 secondi da trascorrere in questo server.")
         for i in range(10):
             await sleep(1)
             await ctx.send(str(10-i))
-        await ctx.message.reply(f"Ho provato ad espellere quel caprone di {utente.mention}!")
+        if (offesa == None):
+            await ctx.message.reply(f"Ho provato ad espellere quel caprone di {utente.mention}!")
+        else:
+            await ctx.message.reply(f"Ho provato ad espellere quel {offesa} di {utente.mention}!")
         try:
             await utente.kick(reason = motivo)
             await ctx.send(f"E ce l'ho fatta! Quel dispotico di {ctx.message.author.mention} è stato accontentato.")
-        except discord.error.Forbidden:
+        except discord.errors.Forbidden:
             await ctx.send(f"Purtroppo però non ci sono riuscito...")
         return
+
+#Comandi sulla gestione del Bot
+
+@Bot.command()
+@commands.has_role('nonciclopediano amministratore')
+async def FERMO(ctx):
+    await ctx.send('Hai usato il comando )FERMO, il mio programma in file `.exe` si arresterà in automatico, per riattivarmi contatta @FLAK_FLAK)3241')
+    await quit()
 
 #Comandi sulle informazioni
 
@@ -137,9 +204,9 @@ async def Informazioni(ctx):
     numero_server = len(Bot.guilds)
     quantità_utenti = len(ctx.guild.members)
     await ctx.send(f"Sono in {numero_server} server.")
-    await ctx.send(f"Trovi la lista dei miei server con `#Lista_server`.")
+    await ctx.send(f"Trovi la lista dei miei server con `)Lista_server`.")
     await ctx.send(f"Posso vedere {quantità_utenti} utenti.")
-    await ctx.send(f"Trovi la lista dei miei server con `#Lista_utenti`. Purtroppo quest'ultimo comando non funziona.")
+    await ctx.send(f"Trovi la lista dei miei server con `)Lista_utenti`. Purtroppo quest'ultimo comando non funziona.")
 
 @Bot.command(description = "Lista dei server dei quali faccio parte.")
 async def Lista_server(ctx):
