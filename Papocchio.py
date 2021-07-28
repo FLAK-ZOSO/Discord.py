@@ -1,8 +1,9 @@
 from random import choice, randint
 from asyncio import sleep
 from discord import Status, Game, Intents, Member, User, Role, Embed, Color, File
-from discord.ext.commands.errors import MissingRole, MissingPermissions
-from discord.errors import Forbidden
+from discord.utils import get
+from discord.ext.commands.errors import MissingRole, MissingPermissions, CommandInvokeError
+from discord.errors import Forbidden, NotFound, HTTPException
 from discord.ext import commands
 from discord import client
 
@@ -17,6 +18,9 @@ gioco = Game(""")Aiuto | Papocchio | @Papocchio#9166""")
 async def on_ready():
     print(Bot.user, " è ora online ", "ID: ", Bot.user.id)
     await Bot.change_presence(status = Status.online, activity = gioco)
+    for i in Bot.get_all_channels():
+        if i.category == "cazzeggio" and i.name == "generale":
+            i.send("Sono tornato!")
 
 #Comandi cazzoni e abbastanza inutili
 
@@ -46,25 +50,75 @@ async def Wikipedia(ctx, pagina):
     nonciclopedia = "https://it.wikipedia.org/wiki/"
     await ctx.message.reply(nonciclopedia + pagina)
 
-@Bot.command(description = "Comando per modificare il mio stato per un determinato arco di tempo.")
+@Bot.command(description = "Comando per modificare la mia attività per un determinato arco di tempo.")
 @commands.has_role('nonciclopediano verificato')
-async def Cambia_stato(ctx, secondi, *nuovo_stato):
+async def Cambia_attività(ctx, secondi, *nuova_attività):
     stato = str('')
-    for parola in nuovo_stato:
+    for parola in nuova_attività:
         parola += " "
         stato += parola
     nuovo_stato = Game(str(stato))
     await Bot.change_presence(status = Status.online, activity = nuovo_stato)
     embed = Embed(description = f"""{ctx.message.author.mention} ha cambiato il mio stato per il tempo di {secondi} secondi.
-Ecco la stronzata che mi ha rifilato come stato:""", color = Color.red())
-    await ctx.message.reply(embed = embed)
+Ecco la stronzata che mi ha rifilato come stato:""", color = Color.green())
+    await ctx.send(embed = embed)
     await ctx.message.delete()
-    embed = Embed(description = f"{nuovo_stato}", color = Color.red())
+    embed = Embed(description = f"{nuovo_stato}", color = Color.green())
     await ctx.send(embed = embed)
     tempo = float(secondi)
     await sleep(tempo)
     await Bot.change_presence(status = Status.online, activity = gioco)
 
+@Bot.command(description = "Comando per modificare il mio stato per un determinato arco di tempo.")
+async def Cambia_stato(ctx, secondi:float, stato):
+    await ctx.message.delete()
+    try:
+        await Bot.change_presence(status = stato_da_nome(stato))
+    except ValueError:
+        await ctx.send(embed = Embed(title = "ERRORE", description = f"""{ctx.message.author.mention}, il valore che hai inserito per il parametro stato non è convertibile in uno stato, riprova con un valore più plausibile di "{stato}", grazie"""))
+    await ctx.send(embed = Embed(title = stato.upper(), description = f"Ho impostato lo stato {stato} per {round(secondi)} secondi. \n Non chiedetemi perché, qui è {ctx.message.author.mention} che comanda...", color = colore_da_stato(stato)))
+    await sleep(secondi)
+    await Bot.change_presence(status = Status.online, activity = gioco)
+    await ctx.send(embed = Embed(title = "BACK IN GREEN", description = "Dopo aver cambiato stato per {} secondi, sono tornato".format(round(secondi)), color = Color.green()))
+
+def stato_da_nome(stato):
+    if (stato == "online" or stato == "Online" or stato == "on" or stato == "On" or stato == "ON"):
+        return Status.online
+    if (stato == "idle" or stato == "Idle" or stato == "inattivo" or stato == "Inattivo"):
+        return Status.idle
+    if (stato == "offline" or stato == "Offline" or stato == "off" or stato == "Off" or stato == "OFF"):
+        return Status.offline
+    if (stato == "non disturbare" or stato == "Non disturbare" or stato == "do not disturb" or stato == "DND" or stato == "dnd"):
+        return Status.dnd
+    if (stato == "invisible" or stato == "Invisible" or stato == "invisibile" or stato == "Invisibile"):
+        return Status.invisible
+    else:
+        raise ValueError(f"Il valore {stato} non è utilizzabile per il parametro stato")
+
+def colore_da_stato(stato):
+    stato = stato_da_nome(stato)
+    if (stato == Status.online):
+        return Color.green()
+    if (stato == Status.idle):
+        return Color.orange()
+    if (stato == Status.offline):
+        return Color.magenta()
+    if (stato == Status.dnd):
+        return Color.red()
+    if (stato == Status.invisible):
+        return Color.light_gray()
+    else:
+        raise ValueError(f"Il valore {stato} non è utilizzabile per il parametro stato")
+
+@Bot.command()
+async def Stealth(ctx, secondi:float):
+    await ctx.message.delete()
+    await ctx.send(embed = Embed(title = "STEALTH", description = f"Su ordine di {ctx.message.author.mention} mi fingerò offline per {round(secondi)} secondi", color = Color.default()))
+    await Bot.change_presence(status = Status.invisible, afk = True)
+    await sleep(secondi)
+    await ctx.send(embed = Embed(title = "BACK IN GREEN", description = "Dopo essermi nascosto per {} secondi, sono tornato".format(round(secondi)), color = Color.green()))
+    await Bot.change_presence(status = Status.online, activity = gioco, afk = False)
+    
 @Bot.command(description = "Un messaggio in anonimo per rompere il cazzo al deficiente di turno.")
 @commands.has_role('nonciclopediano verificato')
 async def Anonimo(ctx, utonto:Member, *Messaggio):
@@ -129,6 +183,33 @@ async def Scrivi(ctx, *parole):
         frase += parola
     await ctx.send(frase)
 
+@Bot.command()
+async def Scrivi_con_attesa(ctx, secondi:float, *parole):
+    await ctx.message.delete()
+    frase = str('')
+    for parola in parole:
+        parola += ' '
+        frase += parola
+    async with ctx.typing():
+        await sleep(secondi)
+    await ctx.send(frase)
+
+@Bot.command()
+async def Scrivi_a_velocità(ctx, caratteri_al_secondo:int, *parole):
+    pass
+
+@Bot.command()
+async def Scrivi_come_utente(ctx, *parole):
+    await ctx.message.delete()
+    frase = str('')
+    for parola in parole:
+        parola += ' '
+        frase += parola
+    secondi = (frase.count(' ')+1)
+    async with ctx.typing():
+        await sleep(secondi)
+    await ctx.send(frase)
+
 @Bot.command(aliases = ["cancella"])
 async def Cancella(ctx, quantità:int):
     await ctx.channel.purge(limit = quantità)
@@ -142,8 +223,9 @@ async def Spam(ctx, ripetizioni:int, *parole):
     for parola in parole:
         parola += ' '
         frase += parola
-    for i in range(ripetizioni):
-        await ctx.send(frase)
+    async with ctx.typing():
+        for i in range(ripetizioni):
+            await ctx.send(frase)
     await ctx.send(embed = Embed(description = f"Spam di {ripetizioni} messaggi effettuata per conto di {ctx.message.author.mention}"))
 
 @Bot.command(aliases = ["Embed"], description = "Invia un embed per conto di un nonciclopediano. Il colore va codificato in RGB. L'immagine va scritta come link. Il file dev'essere presente nel dispositivo dell'host..")
@@ -235,7 +317,17 @@ def Informazioni_messaggio_offline(messaggio):
 @Bot.command()
 async def Informazioni_messaggio(ctx, ID:int):
     await ctx.message.delete()
-    embed = Embed(title = "INFORMAZIONI MESSAGGIO:", description = Informazioni_messaggio_offline(await ctx.fetch_message(ID)), color = Color.blue())
+    try:
+        embed = Embed(title = "INFORMAZIONI MESSAGGIO:", description = Informazioni_messaggio_offline(await ctx.fetch_message(ID)), color = Color.blue())
+    except CommandInvokeError:
+        await ctx.send(embed = Embed(title = "MESSAGGIO NON TROVATO", description = f"Il messaggio con ID {ID} non esiste, oppure è già stato cancellato", color = Color.red()))
+        return
+    except NotFound:
+        await ctx.send(embed = Embed(title = "MESSAGGIO NON TROVATO", description = f"Il messaggio con ID {ID} non esiste, oppure è già stato cancellato", color = Color.red()))
+        return
+    except HTTPException:
+        await ctx.send(embed = Embed(title = "MESSAGGIO NON TROVATO", description = f"Il messaggio con ID {ID} non esiste, oppure è già stato cancellato", color = Color.red()))
+        return
     await ctx.send(embed = embed)
 
 @Bot.command()
@@ -243,6 +335,13 @@ async def Digita(ctx, secondi:float):
     await ctx.message.delete()
     async with ctx.typing():
         await sleep(secondi)
+
+@Bot.command()
+async def LegalizeDrugsAndMurder(ctx):
+    await ctx.message.delete()
+    embed = Embed(title = "LEGALIZE DRUGS AND MURDER")
+    embed.set_image(url = choice(['https://www.ticketone.it/obj/media/IT-eventim/galery/222x222/e/electric-wizard-biglietti.jpg', 'http://4.bp.blogspot.com/-qrCRffBfn9U/UYRFym1TPpI/AAAAAAAAAns/pcB-uzVmw9w/s1600/ewblackmass.jpg', 'https://metalitalia.com/wp-content/uploads/2014/07/electric-wizard-band-2014.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdaursX4QPwoD5dauWtbQ-eoZQ-nmmcXR-GA&usqp=CAU', 'https://metalitalia.com/wp-content/uploads/2018/08/electric-wizard-band-2018.jpeg', 'https://www.ocanerarock.com/sally/wp-content/uploads/2018/11/Electric-Wizard.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwC_APEw7jKsLMevW8oBzUCxN2jHh4RPJG2Q&usqp=CAU', 'https://www.lascimmiapensa.com/wp-content/uploads/2017/11/electricwizardband2017_638.jpg', 'https://media.resources.festicket.com/www/artists/ElectricWizard.jpg', 'http://3.bp.blogspot.com/-C_bW7rSHa8o/TYIpgM_qFXI/AAAAAAAAI_c/aAlVGlsEAIU/s1600/Electric%2BWizard.jpg', 'https://media.stubcloudstatic.com/stubhub-catalog/d_defaultLogo.jpg/t_f-fs-0fv,q_auto:low,f_auto,c_fill,$w_750_mul_3,$h_416_mul_3/performer/700245/r1k5aeangqrftshro5hp', 'https://cdn.wegow.com/media/artists/electric-wizard/electric-wizard-1492555854.33.2560x1440.jpg', 'https://lastfm.freetls.fastly.net/i/u/avatar170s/9f0e22d9f6064320bedfde9b8112ad59', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwyrIxYbr3-8_tvv8coHpfXbnHQ-bb6Pezzg&usqp=CAU', 'https://static.wikia.nocookie.net/metal/images/0/03/ElectricWizard2013.jpg/revision/latest/scale-to-width-down/250?cb=20140310105648', 'https://note-store.com/upload/resize_cache/iblock/605/325_380_2/Electric-Wizard.png', 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Electricwizard_LizBuckingham.jpg', 'https://www.metal.it/image.ashx?id=358&size=400&folder=group&suffix=photo&filters=square', 'https://lh3.googleusercontent.com/proxy/JAu3GMnf2yD_a7H-pSA_P1BEh9lXpfzhDupBUgLbT2OvuKFPn37ynIdIBUtT2SrrAYNfAKv9DTmWuUSrg9LOwzvIriP5lQVzFIO3re44EJg']))
+    await ctx.send(embed = embed)
 
 #Comandi tattici per la gestione dei nonciclopediani
     
@@ -354,9 +453,9 @@ async def Aggiungi_Ruolo(ctx, ruolo:Role, utente:Member):
     try:
         await utente.add_roles(ruolo)
     except Forbidden:
-        await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, non ho i poteri per assegnare quel ruolo. Per farlo dev'essere un ruolo inferiore al più alto dei miei.", color = Color.random()))
+        await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, non ho i poteri per assegnare quel ruolo. Per farlo dev'essere un ruolo inferiore al più alto dei miei.", color = Color.green()))
         return
-    await ctx.send(embed = Embed(description = f"Ho aggiunto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.random()))
+    await ctx.send(embed = Embed(description = f"Ho aggiunto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.green()))
 
 @Bot.command(aliases = ["RR", "rimuovi_ruolo", "Rimuovi_ruolo"])
 async def Rimouvi_Ruolo(ctx, ruolo:Role, utente:Member):
@@ -364,9 +463,9 @@ async def Rimouvi_Ruolo(ctx, ruolo:Role, utente:Member):
     try:
         await utente.remove_roles(ruolo)
     except Forbidden:
-        await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, non ho i poteri per rimuovere quel ruolo. Per farlo dev'essere un ruolo inferiore al più alto dei miei.", color = Color.random()))
+        await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, non ho i poteri per rimuovere quel ruolo. Per farlo dev'essere un ruolo inferiore al più alto dei miei.", color = Color.red()))
         return
-    await ctx.send(embed = Embed(description = f"Ho tolto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.random()))
+    await ctx.send(embed = Embed(description = f"Ho tolto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.red()))
 
 @Bot.command(description = "Con questo comando puoi fare una gentile concessione al nonciclopediano di turno, regalandogli per un numero di secondi limitato un ruolo a tua scelta, di modo da capire fino a che punto possa esserne immeritevole")
 @commands.has_role('nonciclopediano amministratore')
@@ -386,20 +485,39 @@ Goditelo, perché tra {secondi} secondi non sarà più tuo.""", color = Color.da
 
 #Comandi sulla gestione del Bot
 
-@Bot.command()
-@commands.has_role('nonciclopediano amministratore')
+@Bot.command(aliases = ["KillYourself", "Suicide"])
+@commands.has_permissions(administrator = True)
 async def FERMO(ctx):
     await ctx.message.delete()
     await ctx.send(embed = Embed(description = f'Hai usato il comando `)FERMO`, il mio programma in file `.exe` si arresterà in automatico, per riattivarmi contatta `@FLAK_FLAK#3241`', color = Color.default(), title = f"{ctx.message.author.nick} MI HA FERMATO"))
     await quit()
 
+@Bot.command()
+@commands.has_role('nonciclopediano verificato')
+async def SPENTO(ctx, secondi:float):
+    await ctx.message.delete()
+    embed = Embed(title = "SPENTO", description = f"{ctx.message.author.mention} mi ha spento per {round(secondi)} secondi", color = Color.red())
+    await ctx.send(embed = embed)
+    await Bot.close()
+    await sleep(secondi)
+    await Bot.login(token)
+    embed = Embed(title = "ACCESO", description = f"Sono tornato dal letargo di {round(secondi)} impostomi da {ctx.message.author.mention}", color = Color.green())
+    await ctx.send(embed = embed)
+    
 #Comandi sulle informazioni
+
+@Bot.command()
+async def Prefissi(ctx):
+    await ctx.message.delete()
+    await ctx.send(embed = Embed(title = "PREFISSI", description = f"{ctx.message.author.mention}, eccoti i miei prefissi:"))
+    await ctx.send(embed = Embed(description = prefixes))
 
 @Bot.command(aliases = ["info", "Info", "informazioni"], description = "Le informazioni fondamentali del Bot.")
 async def Informazioni(ctx):
     await ctx.message.delete()
     numero_server = len(Bot.guilds)
     quantità_utenti = len(ctx.guild.members)
+    quantità_ruoli = len(ctx.guild.roles)
     #lista_server = str('')
     #for membro in ctx.guild.members:
     #   server = membro.guilds
@@ -410,13 +528,15 @@ async def Informazioni(ctx):
     description = f"""
 Sono in {numero_server} server
 Posso vedere {quantità_utenti} utenti
+Conosco {quantità_ruoli} ruoli
 """
     title = f"INFORMAZIONI"
     embed = Embed(description = description, title = title, color = color)
     await ctx.send(embed = embed)
     description = f"""
 Trovi la lista dei miei server con `)Lista_server`
-Trovi la lista degli utenti con `)Lista_utenti`"""
+Trovi la lista degli utenti con `)Lista_utenti`
+Trovi la lista dei ruoli con `)Lista_ruoli`"""
     title = f"ALTRO"
     embed = Embed(description = description, title = title, color = color)
     await ctx.send(embed = embed)
@@ -425,8 +545,9 @@ Trovi la lista degli utenti con `)Lista_utenti`"""
 
 @Bot.command(description = "Lista dei server dei quali faccio parte.")
 async def Lista_server(ctx):
+    await ctx.message.delete()
     numero_server = len(Bot.guilds)
-    color = Color.random()
+    color = Color.purple()
     await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, eccoti la lista dei {numero_server} server dei quali faccio parte:", color = color))
     Lista = ""
     for guild in Bot.guilds:
@@ -436,8 +557,9 @@ async def Lista_server(ctx):
 
 @Bot.command(description = "Lista degli utenti di questo server.")
 async def Lista_utenti(ctx):
+    await ctx.message.delete()
     numero_utenti = len(ctx.guild.members)
-    color = Color.random()
+    color = Color.purple()
     await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, eccoti la lista dei {numero_utenti} utenti che vedo:", color = color))
     Lista = ""
     for member in ctx.guild.members:
@@ -448,6 +570,16 @@ async def Lista_utenti(ctx):
             Lista += f"""{member}    ({member})
 """
     await ctx.send(embed = Embed(description = Lista, color = color, title = "LISTA UTENTI"))
+
+@Bot.command()
+async def Lista_ruoli(ctx):
+    await ctx.message.delete()
+    color = Color.purple()
+    await ctx.send(embed = Embed(title = "LISTA RUOLI", description = f"{ctx.message.author.mention}, eccoti la lista dei {len(ctx.guild.roles)} ruoli di questo server:", color = color))
+    Lista = ''
+    for role in ctx.guild.roles:
+        Lista += f"{role.mention}\n"
+    await ctx.send(embed = Embed(description = Lista, color = color))
 
 @Bot.command(description = "Lista dei vari utenti del server con i relativi server. Non esiste l'attributo `member.guilds`, per cui non può restituire informazioni. Il comando andrà eliminato.") #Tanto non funziona, non so perchéccazzo lo tengo qui
 @commands.has_role('nonciclopediano verificato')
