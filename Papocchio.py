@@ -8,7 +8,7 @@ from discord.ext import commands
 from discord import client
 
 print("Papocchio.py")
-token = "incidentatly, electronically erased, by your drones"
+token = "Sapessih"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 ids = ["797844636281995274"]
@@ -390,6 +390,8 @@ async def Permessi(ctx, utente:Member):
     await ctx.send(embed = Embed(description = f"{ctx.message.author.mention} ha richiesto i permessi di {utente.mention}", color = Color.blue()))
     await ctx.send(embed = embed)
 
+#Aggiungere qui un comando riguardo le informazioni di un singolo utente
+
 @Bot.command(description = "Decidi quante notifiche mandare per rompere il cazzo allo sfortunato di turno. Se non specificherai un numero allora sarò costretto a deciderlo io...")
 @commands.has_role('nonciclopediano verificato')
 async def Importuna(ctx, utonto:Member, ripetizioni = None, *messaggio_privato):
@@ -552,22 +554,17 @@ async def SPENTO(ctx, secondi:float):
 #Comandi sulle informazioni
 
 @Bot.command()
-async def Prefissi(ctx):
+async def Prefissi(ctx): #Da incorporare in un comando )Informazioni_Bot
     await ctx.message.delete()
     await ctx.send(embed = Embed(title = "PREFISSI", description = f"{ctx.message.author.mention}, eccoti i miei prefissi:"))
     await ctx.send(embed = Embed(description = prefixes))
 
 @Bot.command(aliases = ["info", "Info", "informazioni"], description = "Le informazioni fondamentali del Bot.")
-async def Informazioni(ctx):
+async def Informazioni(ctx): #Andrà ampliato con informazioni sul bot stesso
     await ctx.message.delete()
     numero_server = len(Bot.guilds)
     quantità_utenti = len(ctx.guild.members)
     quantità_ruoli = len(ctx.guild.roles)
-    #lista_server = str('')
-    #for membro in ctx.guild.members:
-    #   server = membro.guilds
-    #   lista_server += membro
-    #   lista_server += server
     color = Color.random()
     await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, ha richiesto le informazioni di cui dispongo:", color = color))
     description = f"""
@@ -585,8 +582,6 @@ Trovi la lista dei ruoli con `)Lista_ruoli`"""
     title = f"ALTRO"
     embed = Embed(description = description, title = title, color = color)
     await ctx.send(embed = embed)
-    #await ctx.send(f"In tutto i componenti di questo server fanno parte di {len(lista_server)} server.")
-    #await ctx.send(f"Trovi la lista dei server degli utenti con `)Lista_server_utenti`")
 
 @Bot.command(description = "Lista dei server dei quali faccio parte.")
 async def Lista_server(ctx):
@@ -625,17 +620,6 @@ async def Lista_ruoli(ctx):
     for role in ctx.guild.roles:
         Lista += f"{role.mention}\n"
     await ctx.send(embed = Embed(description = Lista, color = color))
-
-@Bot.command(description = "Lista dei vari utenti del server con i relativi server. Non esiste l'attributo `member.guilds`, per cui non può restituire informazioni. Il comando andrà eliminato.") #Tanto non funziona, non so perchéccazzo lo tengo qui
-@commands.has_role('nonciclopediano verificato')
-async def Lista_server_utenti(ctx):
-    lista_server = str('')
-    for membro in ctx.guild.members:
-        server = membro.guilds
-        lista_server += str(f"""{membro}
-{server}
-""")
-    await ctx.send(f"lista_server")
 
 @Bot.command()
 async def Documentazione(ctx):
