@@ -11,7 +11,8 @@ print("Papocchio.py")
 token = "incidentatly, electronically erased, by your drones"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
-Bot = commands.Bot(command_prefix = prefixes, description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con )Documentazione", intents = intents)
+ids = ["797844636281995274"]
+Bot = commands.Bot(command_prefix = prefixes, owner_ids = ids, description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con )Documentazione", intents = intents)
 gioco = Game(""")Aiuto | Papocchio | @Papocchio#9166""")
 
 @Bot.event
@@ -383,7 +384,7 @@ async def Permessi(ctx, utente:Member):
     descrizione += "Leggere i messaggi: {}\n".format(p.read_messages)
     descrizione += "Leggere la cronologia: {}\n".format(p.read_message_history)
     descrizione += "Menzionare @everyone: {}\n".format(p.mention_everyone)
-    descrizione = descrizione.replace('True', ':white_check_mark:')
+    descrizione = descrizione.replace('True', ':green_circle:')
     descrizione = descrizione.replace('False', ':red_circle:')
     embed = Embed(title = f"Permessi di {utente}", description = descrizione, color = Color.blue())
     await ctx.send(embed = Embed(description = f"{ctx.message.author.mention} ha richiesto i permessi di {utente.mention}", color = Color.blue()))
