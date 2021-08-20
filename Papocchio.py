@@ -8,25 +8,21 @@ from discord.ext import commands
 from discord import client
 
 print("Papocchio.py")
-token = "Sapessih"
+token = "ODQ5Njg5ODI0MjgxMTAwMzU4.YLe1UA.SF9XQdwUcIpuxoO3-UqR4JDNZH4"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
-ids = ["797844636281995274"]
-Bot = commands.Bot(command_prefix = prefixes, owner_ids = ids, description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con )Documentazione", intents = intents)
+owner_ids = [797844636281995274]
+Bot = commands.Bot(command_prefix = prefixes, owner_ids = set(owner_ids), description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con )Documentazione", intents = intents)
 gioco = Game(""")Aiuto | Papocchio | @Papocchio#9166""")
 
 @Bot.event
 async def on_ready():
     print(Bot.user, " è ora online ", "ID: ", Bot.user.id)
     await Bot.change_presence(status = Status.online, activity = gioco)
-    for i in Bot.get_all_channels():
-        if i.category == "cazzeggio" and i.name == "generale":
-            i.send("Sono tornato!")
 
 #Comandi cazzoni e abbastanza inutili
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
 async def Casuale(ctx):
     await ctx.message.delete()
     nonciclopedia = "https://nonciclopedia.org/wiki/Speciale:PaginaCasuale/"
@@ -40,19 +36,17 @@ async def Casuale(ctx):
     await ctx.send(Pagina_Casuale)
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
 async def Nonciclopedia(ctx, pagina):
     nonciclopedia = "https://nonciclopedia.org/wiki/"
     await ctx.message.reply(nonciclopedia + pagina)
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
 async def Wikipedia(ctx, pagina):
     nonciclopedia = "https://it.wikipedia.org/wiki/"
     await ctx.message.reply(nonciclopedia + pagina)
 
 @Bot.command(description = "Comando per modificare la mia attività per un determinato arco di tempo.")
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(administrator = True)
 async def Cambia_attività(ctx, secondi, *nuova_attività):
     stato = str('')
     for parola in nuova_attività:
@@ -71,6 +65,7 @@ Ecco la stronzata che mi ha rifilato come stato:""", color = Color.green())
     await Bot.change_presence(status = Status.online, activity = gioco)
 
 @Bot.command(description = "Comando per modificare il mio stato per un determinato arco di tempo.")
+@commands.has_permissions(administrator = True)
 async def Cambia_stato(ctx, secondi:float, stato):
     await ctx.message.delete()
     try:
@@ -112,6 +107,7 @@ def colore_da_stato(stato):
         raise ValueError(f"Il valore {stato} non è utilizzabile per il parametro stato")
 
 @Bot.command()
+@commands.has_permissions(send_messages= True)
 async def Stealth(ctx, secondi:float):
     await ctx.message.delete()
     await ctx.send(embed = Embed(title = "STEALTH", description = f"Su ordine di {ctx.message.author.mention} mi fingerò offline per {round(secondi)} secondi", color = Color.default()))
@@ -121,7 +117,7 @@ async def Stealth(ctx, secondi:float):
     await Bot.change_presence(status = Status.online, activity = gioco, afk = False)
     
 @Bot.command(description = "Un messaggio in anonimo per rompere il cazzo al deficiente di turno.")
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(mention_everyone = True)
 async def Anonimo(ctx, utonto:Member, *Messaggio):
     await ctx.message.delete()
     messaggio = str('')
@@ -348,7 +344,7 @@ async def LegalizeDrugsAndMurder(ctx):
 async def RobertaSammarelli(ctx):
     await ctx.message.delete()
     embed = Embed(title = "ROBERTA SAM(M)ARELLI")
-    embed.set_image(url = choice(['https://rockitecn.nohup.it/fotouser/102895/verdena-roberta-sammarelli.jpg', 'https://images2-bergamo.corriereobjects.it/methode_image/2015/08/27/Bergamo/Foto%20Bergamo%20-%20Trattate/verdena-kTt-U43110492147391zcE-1224x916@Corriere-Web-Bergamo-593x443.jpg?v=20150827161913', 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3069b23-a844-4f45-8589-f32f580706ba/d11c0k7-006f5360-3b88-4f3e-9298-7986167e422f.jpg/v1/fill/w_600,h_801,q_75,strp/roberta_sammarelli_by_veergilicious_d11c0k7-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODAxIiwicGF0aCI6IlwvZlwvYjMwNjliMjMtYTg0NC00ZjQ1LTg1ODktZjMyZjU4MDcwNmJhXC9kMTFjMGs3LTAwNmY1MzYwLTNiODgtNGYzZS05Mjk4LTc5ODYxNjdlNDIyZi5qcGciLCJ3aWR0aCI6Ijw9NjAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.EcugiTErOSgl4HH41BB5EAhKBw9TC14jwzEO_koxxpU', 'https://live.staticflickr.com/6073/6086307279_6812bdf2cd_b.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaIcXR2gcYnENaBcYgZfvhdxSxQfecLtG4Q&usqp=CAU', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs4tYJmoLnvGx6bacbc4XMEw80cIg7lJL3og&usqp=CAU', 'https://upload.wikimedia.org/wikipedia/commons/8/80/Roberta_Sammarelli_-_Modena_19-09-2007.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnhU5tMTkOEF8KlOi3L5dmf26ZyM3sDsXE6Q&usqp=CAU', 'https://rockitecn.nohup.it/fotouser/102918/verdena-roberta-sammarelli.jpg?v=843', 'http://2.bp.blogspot.com/-PLn-AtMJB5k/Vd8Oh4noIYI/AAAAAAAA3V4/vnjWHI28ofc/s1600/foto.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2NZQKsmu7yNLbVZsyWcQIDq-qqmPQCgedow&usqp=CAU']))
+    embed.set_image(url = choice(['https://lightstorage.ecodibergamo.it/mediaon/cms.quotidiani/storage/site_media/media/photologue/2016/10/7/photos/cache/a-cena-con-roberta-sammarelli_51915_display.jpg', 'http://baraonda.radiondadurto.org/files/2013/04/1roberta.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/RobertaSammarelli.jpg/1200px-RobertaSammarelli.jpg', 'https://www.nikonclub.it/forum/uploads//201601/appBig_e9d2aa6828bf99cf6900693b4a720bb2.jpg', 'https://rockitecn.nohup.it/fotouser/102895/verdena-roberta-sammarelli.jpg', 'https://images2-bergamo.corriereobjects.it/methode_image/2015/08/27/Bergamo/Foto%20Bergamo%20-%20Trattate/verdena-kTt-U43110492147391zcE-1224x916@Corriere-Web-Bergamo-593x443.jpg?v=20150827161913', 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3069b23-a844-4f45-8589-f32f580706ba/d11c0k7-006f5360-3b88-4f3e-9298-7986167e422f.jpg/v1/fill/w_600,h_801,q_75,strp/roberta_sammarelli_by_veergilicious_d11c0k7-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODAxIiwicGF0aCI6IlwvZlwvYjMwNjliMjMtYTg0NC00ZjQ1LTg1ODktZjMyZjU4MDcwNmJhXC9kMTFjMGs3LTAwNmY1MzYwLTNiODgtNGYzZS05Mjk4LTc5ODYxNjdlNDIyZi5qcGciLCJ3aWR0aCI6Ijw9NjAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.EcugiTErOSgl4HH41BB5EAhKBw9TC14jwzEO_koxxpU', 'https://live.staticflickr.com/6073/6086307279_6812bdf2cd_b.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaIcXR2gcYnENaBcYgZfvhdxSxQfecLtG4Q&usqp=CAU', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs4tYJmoLnvGx6bacbc4XMEw80cIg7lJL3og&usqp=CAU', 'https://upload.wikimedia.org/wikipedia/commons/8/80/Roberta_Sammarelli_-_Modena_19-09-2007.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnhU5tMTkOEF8KlOi3L5dmf26ZyM3sDsXE6Q&usqp=CAU', 'https://rockitecn.nohup.it/fotouser/102918/verdena-roberta-sammarelli.jpg?v=843', 'http://2.bp.blogspot.com/-PLn-AtMJB5k/Vd8Oh4noIYI/AAAAAAAA3V4/vnjWHI28ofc/s1600/foto.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2NZQKsmu7yNLbVZsyWcQIDq-qqmPQCgedow&usqp=CAU']))
     await ctx.send(embed = embed)
 
 @Bot.command()
@@ -357,6 +353,55 @@ async def Caparezza(ctx):
     embed = Embed(title = "CAPAREZZA ||tutt'altro che una carezza||")
     embed.set_image(url = choice(['https://cdn.discordapp.com/attachments/851839196742287380/869931327334518784/caparezza.png', 'https://cdn.discordapp.com/attachments/851839196742287380/869930713049354240/caparezza.png', 'https://cdn.discordapp.com/attachments/851839196742287380/869930601128546314/hqdefault.png', 'https://media.discordapp.net/attachments/851839196742287380/869929953314095114/image.png?width=320&height=320', 'https://notiziemusica.it/wp-content/uploads/2018/02/CS_CAPAREZZA.jpg.webp', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Caparezza_Italia_Wave.jpg/220px-Caparezza_Italia_Wave.jpg', 'https://www.alguer.it/img/Caparezza-3.jpg', 'https://sites.google.com/site/patagarruconiriccioli/_/rsrc/1461764265458/il-nuovo-caparezza/capa2.jpg', 'https://www.studionord.news/wp-content/uploads/2018/03/Caparezza.jpg']))
     await ctx.send(embed = embed)
+
+#Comandi legati ai CA$H
+global Soldi
+from CodificaDizionario import *
+Soldi = DecodificaDizionario(r"C:\\Users\mattia\Desktop\Soldi.txt")
+
+@Bot.command()
+@commands.has_permissions(send_messages = True)
+async def IniziaEconomia(ctx):
+    await ctx.message.add_reaction("<:Papocchio:849018580426555473>")
+    await ctx.send(embed = Embed(title = f"I SOLDI DI {ctx.message.author}", description = f"""{ctx.message.author.mention} si è voluto condannare a diventare un poveraccio.\n Per cominciare gli darò 200 sacchi.""", color = Color.green()))
+    Soldi[str(ctx.message.author.nick+ctx.message.author.discriminator)] = 200
+
+@Bot.command()
+@commands.has_permissions(administrator = True)
+async def AggiungiSoldi(ctx, utente:Member, quantità:float):
+    Soldi[utente.nick+utente.discriminator] += quantità
+    #Comando da completare
+
+@Bot.command()
+@commands.is_owner()
+async def ResettaEconomia(ctx):
+    await ctx.message.reply(embed = Embed(title = "OCCHIO!", description = f"Sei proprio sicuro sicuro di volerlo fare?\n Perderai tutti i dati degli utenti, di questo e altri server!\n Scrivi **Sì** per confermare, **No** per annullare.", color = Color.red()))
+    @Bot.event
+    async def on_message(messaggio):
+        if ("Sì" == messaggio.content):
+            if (messaggio.author == ctx.message.author):
+                ResetEconomy(True)
+                await ctx.send(embed = Embed(title = "ECONOMIA A PUTTANE!", description = f"{messaggio.author.mention} ha azzerato i soldi di ognuno. Peggio di Berlusconi al governo!", color = Color.red()))
+                return
+            else:
+                await messaggio.reply(f"{messaggio.author.mention}, ma chi te l'ha chiesto?")
+        if ("No" == messaggio.content):
+            if (messaggio.author == ctx.message.author):
+                await messaggio.reply(embed = Embed(description = "Confesserò che da te me l'aspettavo."))
+                return
+            else:
+                await messaggio.reply(f"{messaggio.author.mention}, ma chi te l'ha chiesto?")
+
+def ResetEconomy(Sicurissimo:bool = None):
+    if (Sicurissimo == None):
+        Sicurissimo = False
+    if (Sicurissimo):
+        global Soldi
+        CreaCodifica(r"C:\\Users\mattia\Desktop\Archivio Soldi.txt", Soldi)
+        Soldi = {}
+        return True
+    if not(Sicurissimo):
+        return False
 
 #Comandi tattici per la gestione dei nonciclopediani
 
@@ -537,10 +582,12 @@ Goditelo, perché tra {secondi} secondi non sarà più tuo.""", color = Color.da
 async def FERMO(ctx):
     await ctx.message.delete()
     await ctx.send(embed = Embed(description = f'Hai usato il comando `)FERMO`, il mio programma in file `.exe` si arresterà in automatico, per riattivarmi contatta `@FLAK_FLAK#3241`', color = Color.default(), title = f"{ctx.message.author.nick} MI HA FERMATO"))
+    EliminaFile(r"C:\\Users\mattia\Desktop\Soldi.txt")
+    CreaCodifica(r"C:\\Users\mattia\Desktop\Soldi.txt", Soldi)
     await quit()
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(manage_guild = True)
 async def SPENTO(ctx, secondi:float):
     await ctx.message.delete()
     embed = Embed(title = "SPENTO", description = f"{ctx.message.author.mention} mi ha spento per {round(secondi)} secondi", color = Color.red())
@@ -635,4 +682,6 @@ https://github.com/FLAK-ZOSO/Discord.py/blob/Papocchio/Papocchio.py"""
     embed.set_image(url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
     await ctx.message.author.send(embed = embed)
 
+#try:
 Bot.run(token)
+#except ConnectionError:
