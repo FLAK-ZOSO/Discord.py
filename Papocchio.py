@@ -1,18 +1,20 @@
 from random import choice, randint
 from asyncio import sleep
-from discord import Status, Game, Intents, Member, User, Role, Embed, Color, File
+from discord import Status, Game, Intents, Member, User, Role, Embed, Color, File, TextChannel
+from discord.abc import GuildChannel
 from discord.utils import get
 from discord.ext.commands.errors import MissingRole, MissingPermissions, CommandInvokeError
 from discord.errors import Forbidden, NotFound, HTTPException
 from discord.ext import commands
 from discord import client
+from sys import path
 
 print("Papocchio.py")
-token = "ODQ5Njg5ODI0MjgxMTAwMzU4.YLe1UA.SF9XQdwUcIpuxoO3-UqR4JDNZH4"
+token = "SomebodyOnceToldMe"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
-Bot = commands.Bot(command_prefix = prefixes, owner_ids = set(owner_ids), description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia. Trovi la mia documentazione con )Documentazione", intents = intents)
+Bot = commands.Bot(command_prefix = prefixes, owner_ids = set(owner_ids), description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia.\n Trovi la mia documentazione con )Documentazione", intents = intents)
 gioco = Game(""")Aiuto | Papocchio | @Papocchio#9166""")
 
 @Bot.event
@@ -134,7 +136,7 @@ async def Anonimo(ctx, utonto:Member, *Messaggio):
 global offese
 offese = ["vorrei trombarmi tua cugina (perché non c'è cosa più divina), vuoi farti da parte?", "sei così orripilante che in confronto <:jumboface:845028213910798346> è sexy", "tua sorella è così zoccola che Berlusconi le ha dato un posto al senato", "ce l'hai corto",  "tua madre si sta ancora pentendo del mancato aborto", "sei così brutto che se mai avrai una ragazza dovrà essere così miope da poterti scambiare per un rettile", "parli come un'aspirante Barbara d'Urso"]
 @Bot.command(aliases = ["offendi"])
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(send_messages = True)
 async def Offendi(ctx, utente:User):
     try:
         await ctx.message.delete()
@@ -143,7 +145,7 @@ async def Offendi(ctx, utente:User):
         await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo nonciclopediano verificato")
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(send_messages = True)
 async def Aggiungi_offesa(ctx, *Offesa):
     await ctx.message.delete()
     offesa = str('')
@@ -162,7 +164,7 @@ async def Aggiungi_offesa(ctx, *Offesa):
         await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo di nonciclopediano verificato")
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(send_messages = True)
 async def Lista_offese(ctx):
     await ctx.message.delete()
     colore = Color.random()
@@ -172,6 +174,7 @@ async def Lista_offese(ctx):
     await ctx.message.author.send(embed = Embed(description = f"*{offese}*", color = colore))
 
 @Bot.command(aliases = ["scrivi"])
+@commands.has_permissions(send_messages = True)
 async def Scrivi(ctx, *parole):
     await ctx.message.delete()
     frase = str('')
@@ -181,6 +184,7 @@ async def Scrivi(ctx, *parole):
     await ctx.send(frase)
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Scrivi_con_attesa(ctx, secondi:float, *parole):
     await ctx.message.delete()
     frase = str('')
@@ -192,10 +196,12 @@ async def Scrivi_con_attesa(ctx, secondi:float, *parole):
     await ctx.send(frase)
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Scrivi_a_velocità(ctx, caratteri_al_secondo:int, *parole):
     pass
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Scrivi_come_utente(ctx, *parole):
     await ctx.message.delete()
     frase = str('')
@@ -208,12 +214,13 @@ async def Scrivi_come_utente(ctx, *parole):
     await ctx.send(frase)
 
 @Bot.command(aliases = ["cancella"])
+@commands.has_permissions(manage_messages = True)
 async def Cancella(ctx, quantità:int):
     await ctx.channel.purge(limit = quantità)
     await ctx.send(embed = Embed(description = f"Sono stati eliminati {quantità} messaggi per conto di {ctx.message.author.mention}!", color = Color.blurple()))
 
 @Bot.command()
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(send_messages = True)
 async def Spam(ctx, ripetizioni:int, *parole):
     await ctx.message.delete()
     frase = str('')
@@ -226,7 +233,7 @@ async def Spam(ctx, ripetizioni:int, *parole):
     await ctx.send(embed = Embed(description = f"Spam di {ripetizioni} messaggi effettuata per conto di {ctx.message.author.mention}"))
 
 @Bot.command(aliases = ["Embed"], description = "Invia un embed per conto di un nonciclopediano. Il colore va codificato in RGB. L'immagine va scritta come link. Il file dev'essere presente nel dispositivo dell'host..")
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(send_messages = True)
 async def EMBED(ctx, titolo:str, descrizione:str, colore = None, immagine = None, file = None, nome_file = None):
     await ctx.message.delete()
     titolo = titolo.replace('-', ' ')
@@ -266,6 +273,7 @@ async def HelloWorld(ctx, linguaggio):
     await ctx.send(embed = embed)
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Attacca(ctx, ID:int):
     await ctx.message.delete()
     messaggio = await ctx.fetch_message(ID)
@@ -354,9 +362,25 @@ async def Caparezza(ctx):
     embed.set_image(url = choice(['https://cdn.discordapp.com/attachments/851839196742287380/869931327334518784/caparezza.png', 'https://cdn.discordapp.com/attachments/851839196742287380/869930713049354240/caparezza.png', 'https://cdn.discordapp.com/attachments/851839196742287380/869930601128546314/hqdefault.png', 'https://media.discordapp.net/attachments/851839196742287380/869929953314095114/image.png?width=320&height=320', 'https://notiziemusica.it/wp-content/uploads/2018/02/CS_CAPAREZZA.jpg.webp', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Caparezza_Italia_Wave.jpg/220px-Caparezza_Italia_Wave.jpg', 'https://www.alguer.it/img/Caparezza-3.jpg', 'https://sites.google.com/site/patagarruconiriccioli/_/rsrc/1461764265458/il-nuovo-caparezza/capa2.jpg', 'https://www.studionord.news/wp-content/uploads/2018/03/Caparezza.jpg']))
     await ctx.send(embed = embed)
 
+@Bot.command()
+@commands.has_permissions(read_message_history = True)
+async def Messaggi(ctx, utente:Member, canale:TextChannel, quantità:int):
+    await ctx.message.delete()
+    messaggio = await canale.send(embed = Embed(title = "LEGGENDO...", description = f"Sto leggendo {quantità} messaggi al posto di {ctx.message.author.mention}, che non ha voglia di farlo.", color = Color.green()))
+    messaggi = ""
+    with ctx.typing():
+        async for i in canale.history(limit = quantità):
+            if i.author == utente:
+                messaggi += f"{i.id}\n"
+    primo_id = messaggi[:messaggi.find('\n')]
+    await messaggio.edit(embed = Embed(title = "FINITO", description = f"Ho letto {quantità} messaggi. :white_check_mark:"))
+    await ctx.send(embed = Embed(title = f"MESSAGGI DI {utente.nick}", description = messaggi, color = Color.default()))
+    await ctx.send(embed = Embed(description = f"{utente.mention}, puoi richiedere informazioni sui tuoi messaggi con `)InformazioniMessaggio ID`.\n Ad esempio con `)InformazioniMessaggio {primo_id}`"))
+
 #Comandi legati ai CA$H
 global Soldi
-from CodificaDizionario import *
+path.append(r"E:\Python\Python\Moduli da importare")
+from CodificaDizionarioJSON import *
 Soldi = DecodificaDizionario(r"C:\\Users\mattia\Desktop\Soldi.txt")
 
 @Bot.command()
@@ -364,13 +388,37 @@ Soldi = DecodificaDizionario(r"C:\\Users\mattia\Desktop\Soldi.txt")
 async def IniziaEconomia(ctx):
     await ctx.message.add_reaction("<:Papocchio:849018580426555473>")
     await ctx.send(embed = Embed(title = f"I SOLDI DI {ctx.message.author}", description = f"""{ctx.message.author.mention} si è voluto condannare a diventare un poveraccio.\n Per cominciare gli darò 200 sacchi.""", color = Color.green()))
+    global Soldi
     Soldi[str(ctx.message.author.nick+ctx.message.author.discriminator)] = 200
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
+async def Conto(ctx, utente:Member = None):
+    await ctx.message.delete()
+    global Soldi
+    if utente == None:
+        soldi = Soldi[ctx.message.author.nick+ctx.message.author.discriminator]
+        await ctx.send(embed = Embed(title = f"{ctx.message.author.nick}", description = f"**{soldi}£**"))
+    else:
+        soldi = Soldi[utente.nick+utente.discriminator]
+        await ctx.send(embed = Embed(title = f"{utente.nick}", description = f"**{soldi}£**"))
+
+@Bot.command()
 @commands.has_permissions(administrator = True)
-async def AggiungiSoldi(ctx, utente:Member, quantità:float):
+async def AggiungiSoldi(ctx, utente:Member, quantità:float): #Prossimamente aggiungere i try-except
+    await ctx.message.delete()
+    global Soldi
     Soldi[utente.nick+utente.discriminator] += quantità
-    #Comando da completare
+    await ctx.send(embed = Embed(title = "CACC'E SORDI!", description = f"Oggi {ctx.message.author.mention} sbanca.\n Molla giù {round(quantità)} dollaroni a {utente.mention}.", color = Color.green()))
+
+@Bot.command()
+@commands.has_permissions(administrator = True)
+async def DaiSoldi(ctx, utente:Member, quantità:float): #Aggiungere i try-except
+    await ctx.message.delete()
+    global Soldi
+    Soldi[utente.nick+utente.discriminator] += quantità
+    Soldi[ctx.message.author.nick+ctx.message.author.discriminator] += -quantità
+    await ctx.send(embed = Embed(title = "L'INFLAZIONE DILAGA!", description = f"{ctx.message.author.mention} ha deciso di coniare moneta.\n Sto giro tanto {utente.mention} si fotte tutti i {round(quantità)} soldoni...", color = Color.green()))
 
 @Bot.command()
 @commands.is_owner()
@@ -438,7 +486,7 @@ async def Permessi(ctx, utente:Member):
 #Aggiungere qui un comando riguardo le informazioni di un singolo utente
 
 @Bot.command(description = "Decidi quante notifiche mandare per rompere il cazzo allo sfortunato di turno. Se non specificherai un numero allora sarò costretto a deciderlo io...")
-@commands.has_role('nonciclopediano verificato')
+@commands.has_permissions(send_messages = True, mention_everyone = True)
 async def Importuna(ctx, utonto:Member, ripetizioni = None, *messaggio_privato):
     await ctx.message.delete()
     if (ripetizioni == None):
@@ -477,8 +525,8 @@ async def Importuna(ctx, utonto:Member, ripetizioni = None, *messaggio_privato):
         return
 
 @Bot.command()
-@commands.has_role('nonciclopediano rullatore')
-async def Avvertimento(ctx, utente:User, motivo = None):
+@commands.has_permissions(send_messages = True, mention_everyone = True)
+async def Avvertimento(ctx, utente:Member, motivo = None):
     try:
         if motivo == None:
             await ctx.message.reply(embed = Embed(description = f'E per cosa lo staresti avvertendo?! Prova con `)Avvertimento {utente.mention} parole-del-tuo-avvertimento`', color = Color.dark_red()))
@@ -491,7 +539,7 @@ async def Avvertimento(ctx, utente:User, motivo = None):
         await ctx.message.reply(f'{ctx.message.author.mention}, non ho il potere di farlo')
 
 @Bot.command()
-@commands.has_role('nonciclopediano amministratore')
+@commands.has_permissions(administrator = True)
 async def Calciorotazione(ctx, utente:Member, *Motivo):
     await ctx.message.delete()
     if (Motivo != None):
@@ -512,7 +560,7 @@ async def Calciorotazione(ctx, utente:Member, *Motivo):
         await utente.send(embed = Embed(description = f"Sei stato espulso dal server perché così sbatteva a {ctx.message.author.mention}", color = Color.dark_orange()))
 
 @Bot.command(description = "Per dare un po' di tempo al ciccione di turno per lamentarsi dell'espulsione in avvicinamento. Inserire un tempo minimo di 15 secondi.", aliases = ["CCC"])
-@commands.has_role('nonciclopediano amministratore')
+@commands.has_permissions(send_messages = True)
 async def Calciorotazione_con_countdown(ctx, utente:Member, secondi:float, motivo = None, offesa = None):
     await ctx.message.delete()
     if (secondi != None):
@@ -540,6 +588,7 @@ async def Calciorotazione_con_countdown(ctx, utente:Member, secondi:float, motiv
         return
 
 @Bot.command(aliases = ["AR", "aggiungi_ruolo", "Aggiungi_ruolo"])
+@commands.has_permissions(manage_roles = True)
 async def Aggiungi_Ruolo(ctx, ruolo:Role, utente:Member):
     await ctx.message.delete()
     try:
@@ -550,6 +599,7 @@ async def Aggiungi_Ruolo(ctx, ruolo:Role, utente:Member):
     await ctx.send(embed = Embed(description = f"Ho aggiunto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.green()))
 
 @Bot.command(aliases = ["RR", "rimuovi_ruolo", "Rimuovi_ruolo"])
+@commands.has_permissions(send_messages = True)
 async def Rimouvi_Ruolo(ctx, ruolo:Role, utente:Member):
     await ctx.message.delete()
     try:
@@ -560,7 +610,7 @@ async def Rimouvi_Ruolo(ctx, ruolo:Role, utente:Member):
     await ctx.send(embed = Embed(description = f"Ho tolto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.red()))
 
 @Bot.command(description = "Con questo comando puoi fare una gentile concessione al nonciclopediano di turno, regalandogli per un numero di secondi limitato un ruolo a tua scelta, di modo da capire fino a che punto possa esserne immeritevole")
-@commands.has_role('nonciclopediano amministratore')
+@commands.has_permissions(manage_roles = True)
 async def Concessione(ctx, ruolo:Role, utente:Member, secondi:float):
     await ctx.message.delete()
     try:
@@ -601,12 +651,14 @@ async def SPENTO(ctx, secondi:float):
 #Comandi sulle informazioni
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Prefissi(ctx): #Da incorporare in un comando )Informazioni_Bot
     await ctx.message.delete()
     await ctx.send(embed = Embed(title = "PREFISSI", description = f"{ctx.message.author.mention}, eccoti i miei prefissi:"))
     await ctx.send(embed = Embed(description = prefixes))
 
 @Bot.command(aliases = ["info", "Info", "informazioni"], description = "Le informazioni fondamentali del Bot.")
+@commands.has_permissions(send_messages = True)
 async def Informazioni(ctx): #Andrà ampliato con informazioni sul bot stesso
     await ctx.message.delete()
     numero_server = len(Bot.guilds)
@@ -631,6 +683,7 @@ Trovi la lista dei ruoli con `)Lista_ruoli`"""
     await ctx.send(embed = embed)
 
 @Bot.command(description = "Lista dei server dei quali faccio parte.")
+@commands.has_permissions(send_messages = True)
 async def Lista_server(ctx):
     await ctx.message.delete()
     numero_server = len(Bot.guilds)
@@ -643,6 +696,7 @@ async def Lista_server(ctx):
     await ctx.send(embed = Embed(description = Lista, color = color, title = "LISTA SERVER"))
 
 @Bot.command(description = "Lista degli utenti di questo server.")
+@commands.has_permissions(send_messages = True)
 async def Lista_utenti(ctx):
     await ctx.message.delete()
     numero_utenti = len(ctx.guild.members)
@@ -659,6 +713,7 @@ async def Lista_utenti(ctx):
     await ctx.send(embed = Embed(description = Lista, color = color, title = "LISTA UTENTI"))
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Lista_ruoli(ctx):
     await ctx.message.delete()
     color = Color.purple()
@@ -669,6 +724,7 @@ async def Lista_ruoli(ctx):
     await ctx.send(embed = Embed(description = Lista, color = color))
 
 @Bot.command()
+@commands.has_permissions(send_messages = True)
 async def Documentazione(ctx):
     await ctx.message.delete()
     messaggio = f"""{ctx.message.author.mention} ha richiesto il mio codice sorgente:
