@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = ";)"
+token = ":/"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
@@ -382,42 +382,37 @@ async def Messaggi(ctx, utente:Member, canale:TextChannel, quantità:int):
 from datetime import datetime
 global fine
 fine = False
-@Bot.command()
+@Bot.command(description = "Spiare un utente in ogni cosa che fa, dall'andare online fino al modificarsi il nickname, passando dal digitare sulla tastiera e dall'aprire spotify.")
 @commands.has_permissions(send_messages = True)
 async def Spia(ctx, utente:Member):
     autore = ctx.message.author
-    
     await ctx.message.delete()
     await autore.send(embed = Embed(title = "SPIONAGGIO", description = f"Ho iniziato a pedinare {utente.mention}.\n Riferirò se lascerà il server da te indicato.\n Riferirò se apparirà online o cambierà stato.\n Riferirò se digiterà un messaggio nel server, o se lo invierà.\n Riferirò se cambierà username, discriminatore, o avatar.", color = Color.default()))
     await autore.send(embed = Embed(description = f"Per terminare questo pedinamento, scrivi 'Smettila di spiarlo' dove posso leggerlo.\n Il messaggio verrà immediatamente eliminato e smetterai di ricevere notifiche.", color = Color.default()))
     
-    @Bot.event
-    async def on_member_update(prima, dopo):
-        if prima.nick != utente.nick:
-            return
-        Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
-        Emb.add_field(name = "Prima", value = f"{prima.status}\n {prima.activity}\n {prima.nick}", inline = False)
-        Emb.add_field(name = "Dopo", value = f"{dopo.status}\n {dopo.activity}\n {dopo.nick}", inline = False)
-        Emb.set_footer(text = f"Orario: {datetime.now()}")
-        Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-        Emb.set_thumbnail(url = utente.avatar_url)
-        await autore.send(embed = Emb)
-        return
-    
-    @Bot.event
-    async def on_user_update(prima, dopo):
-        if prima.nick != utente.nick:
-            return
-        Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
-        Emb.add_field(name = "Prima", value = f"{prima.avatar}\n {prima.name}\n {prima.discriminator}")
-        Emb.add_field(name = "Dopo", value = f"{dopo.avatar}\n {dopo.name}\n {dopo.discriminator}")
-        Emb.set_footer(text = f"Orario: {datetime.now()}")
-        Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-        Emb.set_thumbnail(url = utente.avatar_url)
-        await autore.send(embed = Emb)
-        return
-    
     while True:
+        prima, dopo = await Bot.wait_for("user_update") #on_user_update event
+        if prima.nick != utente.nick:
+            pass
+        else:
+            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
+            Emb.add_field(name = "Prima", value = f"{prima.avatar}\n {prima.name}\n {prima.discriminator}")
+            Emb.add_field(name = "Dopo", value = f"{dopo.avatar}\n {dopo.name}\n {dopo.discriminator}")
+            Emb.set_footer(text = f"Orario: {datetime.now()}")
+            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+            Emb.set_thumbnail(url = utente.avatar_url)
+            await autore.send(embed = Emb)
+        prima, dopo = await Bot.wait_for("member_update") #on_member_update event
+        if prima.nick != utente.nick:
+            pass
+        else:
+            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
+            Emb.add_field(name = "Prima", value = f"{prima.status}\n {prima.activity}\n {prima.nick}", inline = False)
+            Emb.add_field(name = "Dopo", value = f"{dopo.status}\n {dopo.activity}\n {dopo.nick}", inline = False)
+            Emb.set_footer(text = f"Orario: {datetime.now()}")
+            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+            Emb.set_thumbnail(url = utente.avatar_url)
+            await autore.send(embed = Emb)
         canale, user, quando = await Bot.wait_for("typing") #on_typing event
         if user == utente:
             Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
