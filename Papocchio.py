@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = "SomebodyOnceToldMe"
+token = "ODQ5Njg5ODI0MjgxMTAwMzU4.YLe1UA.2TzScfWn4FLE5DFe7M-_i2ybm9o"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
@@ -348,11 +348,14 @@ async def LegalizeDrugsAndMurder(ctx):
     embed.set_image(url = choice(['https://www.ticketone.it/obj/media/IT-eventim/galery/222x222/e/electric-wizard-biglietti.jpg', 'http://4.bp.blogspot.com/-qrCRffBfn9U/UYRFym1TPpI/AAAAAAAAAns/pcB-uzVmw9w/s1600/ewblackmass.jpg', 'https://metalitalia.com/wp-content/uploads/2014/07/electric-wizard-band-2014.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdaursX4QPwoD5dauWtbQ-eoZQ-nmmcXR-GA&usqp=CAU', 'https://metalitalia.com/wp-content/uploads/2018/08/electric-wizard-band-2018.jpeg', 'https://www.ocanerarock.com/sally/wp-content/uploads/2018/11/Electric-Wizard.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwC_APEw7jKsLMevW8oBzUCxN2jHh4RPJG2Q&usqp=CAU', 'https://www.lascimmiapensa.com/wp-content/uploads/2017/11/electricwizardband2017_638.jpg', 'https://media.resources.festicket.com/www/artists/ElectricWizard.jpg', 'http://3.bp.blogspot.com/-C_bW7rSHa8o/TYIpgM_qFXI/AAAAAAAAI_c/aAlVGlsEAIU/s1600/Electric%2BWizard.jpg', 'https://media.stubcloudstatic.com/stubhub-catalog/d_defaultLogo.jpg/t_f-fs-0fv,q_auto:low,f_auto,c_fill,$w_750_mul_3,$h_416_mul_3/performer/700245/r1k5aeangqrftshro5hp', 'https://cdn.wegow.com/media/artists/electric-wizard/electric-wizard-1492555854.33.2560x1440.jpg', 'https://lastfm.freetls.fastly.net/i/u/avatar170s/9f0e22d9f6064320bedfde9b8112ad59', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwyrIxYbr3-8_tvv8coHpfXbnHQ-bb6Pezzg&usqp=CAU', 'https://static.wikia.nocookie.net/metal/images/0/03/ElectricWizard2013.jpg/revision/latest/scale-to-width-down/250?cb=20140310105648', 'https://note-store.com/upload/resize_cache/iblock/605/325_380_2/Electric-Wizard.png', 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Electricwizard_LizBuckingham.jpg', 'https://www.metal.it/image.ashx?id=358&size=400&folder=group&suffix=photo&filters=square', 'https://lh3.googleusercontent.com/proxy/JAu3GMnf2yD_a7H-pSA_P1BEh9lXpfzhDupBUgLbT2OvuKFPn37ynIdIBUtT2SrrAYNfAKv9DTmWuUSrg9LOwzvIriP5lQVzFIO3re44EJg']))
     await ctx.send(embed = embed)
 
+global Roberta_Sammarelli
+Roberta_Sammarelli = ['https://lightstorage.ecodibergamo.it/mediaon/cms.quotidiani/storage/site_media/media/photologue/2016/10/7/photos/cache/a-cena-con-roberta-sammarelli_51915_display.jpg', 'http://baraonda.radiondadurto.org/files/2013/04/1roberta.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/RobertaSammarelli.jpg/1200px-RobertaSammarelli.jpg', 'https://www.nikonclub.it/forum/uploads//201601/appBig_e9d2aa6828bf99cf6900693b4a720bb2.jpg', 'https://rockitecn.nohup.it/fotouser/102895/verdena-roberta-sammarelli.jpg', 'https://images2-bergamo.corriereobjects.it/methode_image/2015/08/27/Bergamo/Foto%20Bergamo%20-%20Trattate/verdena-kTt-U43110492147391zcE-1224x916@Corriere-Web-Bergamo-593x443.jpg?v=20150827161913', 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3069b23-a844-4f45-8589-f32f580706ba/d11c0k7-006f5360-3b88-4f3e-9298-7986167e422f.jpg/v1/fill/w_600,h_801,q_75,strp/roberta_sammarelli_by_veergilicious_d11c0k7-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODAxIiwicGF0aCI6IlwvZlwvYjMwNjliMjMtYTg0NC00ZjQ1LTg1ODktZjMyZjU4MDcwNmJhXC9kMTFjMGs3LTAwNmY1MzYwLTNiODgtNGYzZS05Mjk4LTc5ODYxNjdlNDIyZi5qcGciLCJ3aWR0aCI6Ijw9NjAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.EcugiTErOSgl4HH41BB5EAhKBw9TC14jwzEO_koxxpU', 'https://live.staticflickr.com/6073/6086307279_6812bdf2cd_b.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaIcXR2gcYnENaBcYgZfvhdxSxQfecLtG4Q&usqp=CAU', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs4tYJmoLnvGx6bacbc4XMEw80cIg7lJL3og&usqp=CAU', 'https://upload.wikimedia.org/wikipedia/commons/8/80/Roberta_Sammarelli_-_Modena_19-09-2007.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnhU5tMTkOEF8KlOi3L5dmf26ZyM3sDsXE6Q&usqp=CAU', 'https://rockitecn.nohup.it/fotouser/102918/verdena-roberta-sammarelli.jpg?v=843', 'http://2.bp.blogspot.com/-PLn-AtMJB5k/Vd8Oh4noIYI/AAAAAAAA3V4/vnjWHI28ofc/s1600/foto.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2NZQKsmu7yNLbVZsyWcQIDq-qqmPQCgedow&usqp=CAU']
 @Bot.command()
 async def RobertaSammarelli(ctx):
     await ctx.message.delete()
     embed = Embed(title = "ROBERTA SAM(M)ARELLI")
-    embed.set_image(url = choice(['https://lightstorage.ecodibergamo.it/mediaon/cms.quotidiani/storage/site_media/media/photologue/2016/10/7/photos/cache/a-cena-con-roberta-sammarelli_51915_display.jpg', 'http://baraonda.radiondadurto.org/files/2013/04/1roberta.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/RobertaSammarelli.jpg/1200px-RobertaSammarelli.jpg', 'https://www.nikonclub.it/forum/uploads//201601/appBig_e9d2aa6828bf99cf6900693b4a720bb2.jpg', 'https://rockitecn.nohup.it/fotouser/102895/verdena-roberta-sammarelli.jpg', 'https://images2-bergamo.corriereobjects.it/methode_image/2015/08/27/Bergamo/Foto%20Bergamo%20-%20Trattate/verdena-kTt-U43110492147391zcE-1224x916@Corriere-Web-Bergamo-593x443.jpg?v=20150827161913', 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3069b23-a844-4f45-8589-f32f580706ba/d11c0k7-006f5360-3b88-4f3e-9298-7986167e422f.jpg/v1/fill/w_600,h_801,q_75,strp/roberta_sammarelli_by_veergilicious_d11c0k7-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODAxIiwicGF0aCI6IlwvZlwvYjMwNjliMjMtYTg0NC00ZjQ1LTg1ODktZjMyZjU4MDcwNmJhXC9kMTFjMGs3LTAwNmY1MzYwLTNiODgtNGYzZS05Mjk4LTc5ODYxNjdlNDIyZi5qcGciLCJ3aWR0aCI6Ijw9NjAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.EcugiTErOSgl4HH41BB5EAhKBw9TC14jwzEO_koxxpU', 'https://live.staticflickr.com/6073/6086307279_6812bdf2cd_b.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaIcXR2gcYnENaBcYgZfvhdxSxQfecLtG4Q&usqp=CAU', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs4tYJmoLnvGx6bacbc4XMEw80cIg7lJL3og&usqp=CAU', 'https://upload.wikimedia.org/wikipedia/commons/8/80/Roberta_Sammarelli_-_Modena_19-09-2007.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnhU5tMTkOEF8KlOi3L5dmf26ZyM3sDsXE6Q&usqp=CAU', 'https://rockitecn.nohup.it/fotouser/102918/verdena-roberta-sammarelli.jpg?v=843', 'http://2.bp.blogspot.com/-PLn-AtMJB5k/Vd8Oh4noIYI/AAAAAAAA3V4/vnjWHI28ofc/s1600/foto.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2NZQKsmu7yNLbVZsyWcQIDq-qqmPQCgedow&usqp=CAU']))
+    global Roberta_Sammarelli
+    embed.set_image(url = choice(Roberta_Sammarelli))
     await ctx.send(embed = embed)
 
 @Bot.command()
@@ -376,6 +379,86 @@ async def Messaggi(ctx, utente:Member, canale:TextChannel, quantità:int):
     await messaggio.edit(embed = Embed(title = "FINITO", description = f"Ho letto {quantità} messaggi. :white_check_mark:"))
     await ctx.send(embed = Embed(title = f"MESSAGGI DI {utente.nick}", description = messaggi, color = Color.default()))
     await ctx.send(embed = Embed(description = f"{utente.mention}, puoi richiedere informazioni sui tuoi messaggi con `)InformazioniMessaggio ID`.\n Ad esempio con `)InformazioniMessaggio {primo_id}`"))
+
+from datetime import datetime
+global fine
+fine = False
+@Bot.command()
+@commands.has_permissions(send_messages = True)
+async def Spia(ctx, utente:Member):
+    autore = ctx.message.author
+    
+    await ctx.message.delete()
+    await autore.send(embed = Embed(title = "SPIONAGGIO", description = f"Ho iniziato a pedinare {utente.mention}.\n Riferirò se lascerà il server da te indicato.\n Riferirò se apparirà online o cambierà stato.\n Riferirò se digiterà un messaggio nel server, o se lo invierà.\n Riferirò se cambierà username, discriminatore, o avatar.", color = Color.default()))
+    await autore.send(embed = Embed(description = f"Per terminare questo pedinamento, scrivi 'Smettila di spiarlo' dove posso leggerlo.\n Il messaggio verrà immediatamente eliminato e smetterai di ricevere notifiche.", color = Color.default()))
+
+    @Bot.event
+    async def on_message(messaggio):
+        if messaggio.author == ctx.message.author:
+            if messaggio.content == "Smettila di spiarlo":
+                await messaggio.delete()
+                global fine
+                fine = True
+        if messaggio.author == utente:
+            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
+            Emb.set_footer(text = f"Orario: {datetime.now()}")
+            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+            Emb.set_thumbnail(url = utente.avatar_url)
+            await autore.send(embed = Emb)
+        await Bot.process_commands(messaggio)
+        return
+    
+    @Bot.event
+    async def on_member_update(prima, dopo):
+        if prima.nick != utente.nick:
+            return
+        Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
+        Emb.add_field(name = "Prima", value = f"{prima.status}\n {prima.activity}\n {prima.nick}", inline = False)
+        Emb.add_field(name = "Dopo", value = f"{dopo.status}\n {dopo.activity}\n {dopo.nick}", inline = False)
+        Emb.set_footer(text = f"Orario: {datetime.now()}")
+        Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+        Emb.set_thumbnail(url = utente.avatar_url)
+        await utente.send(embed = Emb)
+        return
+    
+    @Bot.event
+    async def on_user_update(prima, dopo):
+        global fine
+        if fine:
+            return
+        if prima.nick != utente.nick:
+            return
+        Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
+        Emb.add_field(name = "Prima", value = f"{prima.avatar}\n {prima.name}\n {prima.discriminator}")
+        Emb.add_field(name = "Dopo", value = f"{dopo.avatar}\n {dopo.name}\n {dopo.discriminator}")
+        Emb.set_footer(text = f"Orario: {datetime.now()}")
+        Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+        Emb.set_thumbnail(url = utente.avatar_url)
+        await utente.send(embed = Emb)
+        return
+    
+    @Bot.event
+    async def on_typing(canale, Utente, quando):
+        global fine
+        if fine:
+            return
+        if Utente == utente:
+            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
+            Emb.set_footer(text = f"Orario: {datetime.now()}")
+            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+            Emb.set_thumbnail(url = utente.avatar_url)
+            await autore.send(embed = Emb)
+        return
+    
+    global fine
+    if fine:
+        Emb = Embed(title = "SPIONAGGIO", description = f"Ho smesso di spiare {utente.name}#{utente.discriminator}.")
+        Emb.set_footer(text = f"Orario: {datetime.now()}")
+        Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+        Emb.set_thumbnail(url = utente.avatar_url)
+        await autore.send(embed = Emb)
+        fine = False
+        return
 
 #Comandi legati ai CA$H
 global Soldi
@@ -419,6 +502,14 @@ async def DaiSoldi(ctx, utente:Member, quantità:float): #Aggiungere i try-excep
     Soldi[utente.nick+utente.discriminator] += quantità
     Soldi[ctx.message.author.nick+ctx.message.author.discriminator] += -quantità
     await ctx.send(embed = Embed(title = "L'INFLAZIONE DILAGA!", description = f"{ctx.message.author.mention} ha deciso di coniare moneta.\n Sto giro tanto {utente.mention} si fotte tutti i {round(quantità)} soldoni...", color = Color.green()))
+
+@Bot.event
+async def on_user_update(prima, dopo): #Questo serve per aggiornare il dizionario Soldi ogni volta che un utente cambia nickname o discriminatore
+    pass
+
+@Bot.event
+async def on_member_update(prima, dopo):
+    pass
 
 @Bot.command()
 @commands.is_owner()
