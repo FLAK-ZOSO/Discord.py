@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = "Who reads is a thief"
+token = ";)"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
@@ -252,9 +252,8 @@ async def EMBED(ctx, titolo:str, descrizione:str, colore = None, immagine = None
     await ctx.message.author.send(embed = Embed(title = "EMBED", description =f"{ctx.message.author.mention}, ho inviato nel canale {ctx.channel} il tuo embed"))
 
 @Bot.command()
-async def HelloWorld(ctx, linguaggio):
+async def HelloWorld(ctx, linguaggio:str):
     await ctx.message.delete()
-    linguaggio = str(linguaggio)
     
     if (linguaggio == "python" or linguaggio == "py" or linguaggio == "Python"):
         script = "print('Hello World')"
@@ -402,7 +401,7 @@ async def Spia(ctx, utente:Member):
         Emb.set_footer(text = f"Orario: {datetime.now()}")
         Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
         Emb.set_thumbnail(url = utente.avatar_url)
-        await utente.send(embed = Emb)
+        await autore.send(embed = Emb)
         return
     
     @Bot.event
@@ -415,21 +414,18 @@ async def Spia(ctx, utente:Member):
         Emb.set_footer(text = f"Orario: {datetime.now()}")
         Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
         Emb.set_thumbnail(url = utente.avatar_url)
-        await utente.send(embed = Emb)
+        await autore.send(embed = Emb)
         return
     
-    @Bot.event
-    async def on_typing(canale, Utente, quando):
-        if Utente == utente:
+    while True:
+        canale, user, quando = await Bot.wait_for("typing") #on_typing event
+        if user == utente:
             Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
             Emb.set_footer(text = f"Orario: {datetime.now()}")
             Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
             Emb.set_thumbnail(url = utente.avatar_url)
             await autore.send(embed = Emb)
-        return
-
-    while True:
-        messaggio = await Bot.wait_for("message", check = None)
+        messaggio = await Bot.wait_for("message", check = None) #on_message event
         if messaggio.author == utente:
             Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
             Emb.set_footer(text = f"Orario: {datetime.now()}")
