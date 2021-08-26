@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = "ODQ5Njg5ODI0MjgxMTAwMzU4.YLe1UA.2TzScfWn4FLE5DFe7M-_i2ybm9o"
+token = "Who reads is a thief"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
@@ -391,22 +391,6 @@ async def Spia(ctx, utente:Member):
     await ctx.message.delete()
     await autore.send(embed = Embed(title = "SPIONAGGIO", description = f"Ho iniziato a pedinare {utente.mention}.\n Riferirò se lascerà il server da te indicato.\n Riferirò se apparirà online o cambierà stato.\n Riferirò se digiterà un messaggio nel server, o se lo invierà.\n Riferirò se cambierà username, discriminatore, o avatar.", color = Color.default()))
     await autore.send(embed = Embed(description = f"Per terminare questo pedinamento, scrivi 'Smettila di spiarlo' dove posso leggerlo.\n Il messaggio verrà immediatamente eliminato e smetterai di ricevere notifiche.", color = Color.default()))
-
-    @Bot.event
-    async def on_message(messaggio):
-        if messaggio.author == ctx.message.author:
-            if messaggio.content == "Smettila di spiarlo":
-                await messaggio.delete()
-                global fine
-                fine = True
-        if messaggio.author == utente:
-            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
-            Emb.set_footer(text = f"Orario: {datetime.now()}")
-            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-            Emb.set_thumbnail(url = utente.avatar_url)
-            await autore.send(embed = Emb)
-        await Bot.process_commands(messaggio)
-        return
     
     @Bot.event
     async def on_member_update(prima, dopo):
@@ -423,9 +407,6 @@ async def Spia(ctx, utente:Member):
     
     @Bot.event
     async def on_user_update(prima, dopo):
-        global fine
-        if fine:
-            return
         if prima.nick != utente.nick:
             return
         Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
@@ -439,9 +420,6 @@ async def Spia(ctx, utente:Member):
     
     @Bot.event
     async def on_typing(canale, Utente, quando):
-        global fine
-        if fine:
-            return
         if Utente == utente:
             Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
             Emb.set_footer(text = f"Orario: {datetime.now()}")
@@ -449,16 +427,22 @@ async def Spia(ctx, utente:Member):
             Emb.set_thumbnail(url = utente.avatar_url)
             await autore.send(embed = Emb)
         return
-    
-    global fine
-    if fine:
-        Emb = Embed(title = "SPIONAGGIO", description = f"Ho smesso di spiare {utente.name}#{utente.discriminator}.")
-        Emb.set_footer(text = f"Orario: {datetime.now()}")
-        Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-        Emb.set_thumbnail(url = utente.avatar_url)
-        await autore.send(embed = Emb)
-        fine = False
-        return
+
+    while True:
+        messaggio = await Bot.wait_for("message", check = None)
+        if messaggio.author == utente:
+            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
+            Emb.set_footer(text = f"Orario: {datetime.now()}")
+            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+            Emb.set_thumbnail(url = utente.avatar_url)
+            await autore.send(embed = Emb)
+        if messaggio.author == autore and messaggio.content == "Smettila di spiarlo":
+            Emb = Embed(title = "SPIONAGGIO", description = f"Ho smesso di spiare {utente.name}#{utente.discriminator}.")
+            Emb.set_footer(text = f"Orario: {datetime.now()}")
+            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+            Emb.set_thumbnail(url = utente.avatar_url)
+            await autore.send(embed = Emb)
+            return
 
 #Comandi legati ai CA$H
 global Soldi
