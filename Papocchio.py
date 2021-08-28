@@ -419,9 +419,7 @@ async def Spia(ctx, utente:Member):
 
         if event == "user_update":
             prima, dopo = args
-            if prima.nick != utente.nick:
-                pass
-            else:
+            if prima.nick == utente.nick:
                 Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
                 Emb.add_field(name = "Prima", value = f"{prima.avatar}\n {prima.name}\n {prima.discriminator}")
                 Emb.add_field(name = "Dopo", value = f"{dopo.avatar}\n {dopo.name}\n {dopo.discriminator}")
