@@ -1,6 +1,6 @@
 from random import choice, randint
 from asyncio import sleep
-from discord import Status, Game, Intents, Member, User, Role, Embed, Color, File, TextChannel
+from discord import Status, Game, Intents, Member, User, Role, Embed, Color, File, TextChannel, user
 from discord.abc import GuildChannel
 from discord.utils import get
 from discord.ext.commands.errors import MissingRole, MissingPermissions, CommandInvokeError
@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = ":/"
+token = "Mlmlmlml"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
@@ -39,13 +39,15 @@ async def Casuale(ctx):
 
 @Bot.command()
 async def Nonciclopedia(ctx, pagina):
+    await ctx.message.delete()
     nonciclopedia = "https://nonciclopedia.org/wiki/"
-    await ctx.message.reply(nonciclopedia + pagina)
+    await ctx.send(nonciclopedia + pagina)
 
 @Bot.command()
 async def Wikipedia(ctx, pagina):
+    await ctx.message.delete()
     nonciclopedia = "https://it.wikipedia.org/wiki/"
-    await ctx.message.reply(nonciclopedia + pagina)
+    await ctx.send(nonciclopedia + pagina)
 
 @Bot.command(description = "Comando per modificare la mia attività per un determinato arco di tempo.")
 @commands.has_permissions(administrator = True)
@@ -248,6 +250,9 @@ async def EMBED(ctx, titolo:str, descrizione:str, colore = None, immagine = None
         file = File(fp = file)
         if (nome_file != None):
             file = File(fp = file, filename = nome_file)
+    embed.set_footer(text = f"Embed inviato in data {datetime.now()}", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+    embed.set_author(name = ctx.message.author.nick, icon_url = ctx.message.author.avatar_url)
+    embed.set_thumbnail(url = ctx.message.author.avatar_url)
     await ctx.send(embed = embed)
     await ctx.message.author.send(embed = Embed(title = "EMBED", description =f"{ctx.message.author.mention}, ho inviato nel canale {ctx.channel} il tuo embed"))
 
@@ -354,7 +359,9 @@ async def RobertaSammarelli(ctx):
     await ctx.message.delete()
     embed = Embed(title = "ROBERTA SAM(M)ARELLI")
     global Roberta_Sammarelli
-    embed.set_image(url = choice(Roberta_Sammarelli))
+    url = choice(Roberta_Sammarelli)
+    embed.set_image(url = url)
+    embed.set_footer(text = f"Per {ctx.message.author.nick} con amore", icon_url = url)
     await ctx.send(embed = embed)
 
 @Bot.command()
@@ -379,9 +386,9 @@ async def Messaggi(ctx, utente:Member, canale:TextChannel, quantità:int):
     await ctx.send(embed = Embed(title = f"MESSAGGI DI {utente.nick}", description = messaggi, color = Color.default()))
     await ctx.send(embed = Embed(description = f"{utente.mention}, puoi richiedere informazioni sui tuoi messaggi con `)InformazioniMessaggio ID`.\n Ad esempio con `)InformazioniMessaggio {primo_id}`"))
 
+from asyncio import create_task, wait, FIRST_COMPLETED
 from datetime import datetime
-global fine
-fine = False
+from typing import Iterable
 @Bot.command(description = "Spiare un utente in ogni cosa che fa, dall'andare online fino al modificarsi il nickname, passando dal digitare sulla tastiera e dall'aprire spotify.")
 @commands.has_permissions(send_messages = True)
 async def Spia(ctx, utente:Member):
@@ -389,57 +396,81 @@ async def Spia(ctx, utente:Member):
     await ctx.message.delete()
     await autore.send(embed = Embed(title = "SPIONAGGIO", description = f"Ho iniziato a pedinare {utente.mention}.\n Riferirò se lascerà il server da te indicato.\n Riferirò se apparirà online o cambierà stato.\n Riferirò se digiterà un messaggio nel server, o se lo invierà.\n Riferirò se cambierà username, discriminatore, o avatar.", color = Color.default()))
     await autore.send(embed = Embed(description = f"Per terminare questo pedinamento, scrivi 'Smettila di spiarlo' dove posso leggerlo.\n Il messaggio verrà immediatamente eliminato e smetterai di ricevere notifiche.", color = Color.default()))
-    
+
+    async def wait_for_event(event, **options):
+        args = await Bot.wait_for(event, **options)
+        if not isinstance(args, Iterable):
+            args = [args]
+        return event, *args
+
     while True:
-        prima, dopo = await Bot.wait_for("user_update") #on_user_update event
-        if prima.nick != utente.nick:
-            pass
-        else:
-            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
-            Emb.add_field(name = "Prima", value = f"{prima.avatar}\n {prima.name}\n {prima.discriminator}")
-            Emb.add_field(name = "Dopo", value = f"{dopo.avatar}\n {dopo.name}\n {dopo.discriminator}")
-            Emb.set_footer(text = f"Orario: {datetime.now()}")
-            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-            Emb.set_thumbnail(url = utente.avatar_url)
-            await autore.send(embed = Emb)
-        prima, dopo = await Bot.wait_for("member_update") #on_member_update event
-        if prima.nick != utente.nick:
-            pass
-        else:
-            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
-            Emb.add_field(name = "Prima", value = f"{prima.status}\n {prima.activity}\n {prima.nick}", inline = False)
-            Emb.add_field(name = "Dopo", value = f"{dopo.status}\n {dopo.activity}\n {dopo.nick}", inline = False)
-            Emb.set_footer(text = f"Orario: {datetime.now()}")
-            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-            Emb.set_thumbnail(url = utente.avatar_url)
-            await autore.send(embed = Emb)
-        canale, user, quando = await Bot.wait_for("typing") #on_typing event
-        if user == utente:
-            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
-            Emb.set_footer(text = f"Orario: {datetime.now()}")
-            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-            Emb.set_thumbnail(url = utente.avatar_url)
-            await autore.send(embed = Emb)
-        messaggio = await Bot.wait_for("message", check = None) #on_message event
-        if messaggio.author == utente:
-            Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
-            Emb.set_footer(text = f"Orario: {datetime.now()}")
-            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-            Emb.set_thumbnail(url = utente.avatar_url)
-            await autore.send(embed = Emb)
-        if messaggio.author == autore and messaggio.content == "Smettila di spiarlo":
-            Emb = Embed(title = "SPIONAGGIO", description = f"Ho smesso di spiare {utente.name}#{utente.discriminator}.")
-            Emb.set_footer(text = f"Orario: {datetime.now()}")
-            Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
-            Emb.set_thumbnail(url = utente.avatar_url)
-            await autore.send(embed = Emb)
-            return
+
+        tasks = [
+            create_task(wait_for_event("member_update")),
+            create_task(wait_for_event("user_update")),
+            create_task(wait_for_event("message")),
+            create_task(wait_for_event("typing"))
+            ]
+
+        event, *args = await wait(tasks, return_when = FIRST_COMPLETED)
+        
+        if event == "user_update":
+            prima, dopo = args[0], args[1]
+            if prima.nick != utente.nick:
+                pass
+            else:
+                Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
+                Emb.add_field(name = "Prima", value = f"{prima.avatar}\n {prima.name}\n {prima.discriminator}")
+                Emb.add_field(name = "Dopo", value = f"{dopo.avatar}\n {dopo.name}\n {dopo.discriminator}")
+                Emb.set_footer(text = f"Orario: {datetime.now()}")
+                Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+                Emb.set_thumbnail(url = utente.avatar_url)
+                await autore.send(embed = Emb)
+        
+        if event == "member_update":
+            prima, dopo = args[0], args[1]
+            if prima.nick != utente.nick:
+                pass
+            else:
+                Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
+                Emb.add_field(name = "Prima", value = f"{prima.status}\n {prima.activity}\n {prima.nick}", inline = False)
+                Emb.add_field(name = "Dopo", value = f"{dopo.status}\n {dopo.activity}\n {dopo.nick}", inline = False)
+                Emb.set_footer(text = f"Orario: {datetime.now()}")
+                Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+                Emb.set_thumbnail(url = utente.avatar_url)
+                await autore.send(embed = Emb)
+
+        if event == "typing":
+            canale, user, quando = args[0], args[1], args[2]
+            if user == utente:
+                Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
+                Emb.set_footer(text = f"Orario: {datetime.now()}")
+                Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+                Emb.set_thumbnail(url = utente.avatar_url)
+                await autore.send(embed = Emb)
+
+        if event == "message":
+            messaggio = args[0]
+            if messaggio.author == utente:
+                Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
+                Emb.set_footer(text = f"Orario: {datetime.now()}")
+                Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+                Emb.set_thumbnail(url = utente.avatar_url)
+                await autore.send(embed = Emb)
+            if messaggio.author == autore and messaggio.content == "Smettila di spiarlo":
+                await messaggio.delete()
+                Emb = Embed(title = "SPIONAGGIO", description = f"Ho smesso di spiare {utente.name}#{utente.discriminator}.")
+                Emb.set_footer(text = f"Orario: {datetime.now()}")
+                Emb.set_author(name = "Papocchio", icon_url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
+                Emb.set_thumbnail(url = utente.avatar_url)
+                await autore.send(embed = Emb)
+                return
 
 #Comandi legati ai CA$H
 global Soldi
-path.append(r"E:\Python\Python\Moduli da importare")
+path.append(r"D:\Python\Python\Moduli da importare")
 from CodificaDizionarioJSON import *
-Soldi = DecodificaDizionario(r"C:\\Users\mattia\Desktop\Soldi.txt")
+Soldi = DecodificaDizionario(r"D:\Documenti\TXT\Soldi.txt")
 
 @Bot.command()
 @commands.has_permissions(send_messages = True)
@@ -511,7 +542,7 @@ def ResetEconomy(Sicurissimo:bool = None):
         Sicurissimo = False
     if (Sicurissimo):
         global Soldi
-        CreaCodifica(r"C:\\Users\mattia\Desktop\Archivio Soldi.txt", Soldi)
+        CreaCodifica(r"D:\Documenti\TXT\Archivio Soldi.txt", Soldi)
         Soldi = {}
         return True
     if not(Sicurissimo):
@@ -698,8 +729,8 @@ Goditelo, perché tra {secondi} secondi non sarà più tuo.""", color = Color.da
 async def FERMO(ctx):
     await ctx.message.delete()
     await ctx.send(embed = Embed(description = f'Hai usato il comando `)FERMO`, il mio programma in file `.exe` si arresterà in automatico, per riattivarmi contatta `@FLAK_FLAK#3241`', color = Color.default(), title = f"{ctx.message.author.nick} MI HA FERMATO"))
-    EliminaFile(r"C:\\Users\mattia\Desktop\Soldi.txt")
-    CreaCodifica(r"C:\\Users\mattia\Desktop\Soldi.txt", Soldi)
+    EliminaFile(r"D:\Documenti\TXT\Soldi.txt")
+    CreaCodifica(r"D:\Documenti\TXT\Soldi.txt", Soldi)
     await quit()
 
 @Bot.command()
