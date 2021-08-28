@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = "Mlmlmlml"
+token = "Nzg2MjA3NzQ3NjkxNjQyOTAw.X9DDBg.AM_vffuRkQXFnST-lFaPgYF9ets"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
@@ -404,18 +404,21 @@ async def Spia(ctx, utente:Member):
         return event, *args
 
     while True:
-
         tasks = [
             create_task(wait_for_event("member_update")),
             create_task(wait_for_event("user_update")),
             create_task(wait_for_event("message")),
             create_task(wait_for_event("typing"))
-            ]
+        ]
 
-        event, *args = await wait(tasks, return_when = FIRST_COMPLETED)
+        done, pending = await wait(tasks, return_when=FIRST_COMPLETED)
+        for t in pending:
+            t.cancel()
         
+        event, *args = list(done)[0].result()
+
         if event == "user_update":
-            prima, dopo = args[0], args[1]
+            prima, dopo = args
             if prima.nick != utente.nick:
                 pass
             else:
