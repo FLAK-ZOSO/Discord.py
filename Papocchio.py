@@ -430,11 +430,9 @@ async def Spia(ctx, utente:Member):
                 Emb.set_thumbnail(url = utente.avatar_url)
                 await autore.send(embed = Emb)
         
-        if event == "member_update":
-            prima, dopo = args[0], args[1]
-            if prima.nick != utente.nick:
-                pass
-            else:
+        elif event == "member_update":
+            prima, dopo = args
+            if prima.nick == utente.nick:
                 Emb = Embed(title = f"{utente.name}#{utente.discriminator}", color = Color.default())
                 Emb.add_field(name = "Prima", value = f"{prima.status}\n {prima.activity}\n {prima.nick}", inline = False)
                 Emb.add_field(name = "Dopo", value = f"{dopo.status}\n {dopo.activity}\n {dopo.nick}", inline = False)
@@ -443,8 +441,8 @@ async def Spia(ctx, utente:Member):
                 Emb.set_thumbnail(url = utente.avatar_url)
                 await autore.send(embed = Emb)
 
-        if event == "typing":
-            canale, user, quando = args[0], args[1], args[2]
+        elif event == "typing":
+            canale, user, quando = args
             if user == utente:
                 Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"Ho beccato {utente.mention} a digitare in {canale}.", color = Color.default())
                 Emb.set_footer(text = f"Orario: {datetime.now()}")
@@ -452,7 +450,7 @@ async def Spia(ctx, utente:Member):
                 Emb.set_thumbnail(url = utente.avatar_url)
                 await autore.send(embed = Emb)
 
-        if event == "message":
+        elif event == "message":
             messaggio = args[0]
             if messaggio.author == utente:
                 Emb = Embed(title = f"{utente.name}#{utente.discriminator}", description = f"{utente.mention} ha inviato un messaggio in {messaggio.channel}.", color = Color.default())
