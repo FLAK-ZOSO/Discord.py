@@ -10,7 +10,7 @@ from discord import client
 from sys import path
 
 print("Papocchio.py")
-token = "Nzg2MjA3NzQ3NjkxNjQyOTAw.X9DDBg.AM_vffuRkQXFnST-lFaPgYF9ets"
+token = "XXXXXXXXXXX"
 intents = Intents().all()
 prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
 owner_ids = [797844636281995274]
