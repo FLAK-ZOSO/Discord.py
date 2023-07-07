@@ -1,101 +1,45 @@
 from random import choice, randint
 from asyncio import sleep
-from discord import Status, Game, Intents, Member, User, Role, Embed, Color, File, TextChannel, User
-from discord.abc import GuildChannel
-from discord.message import Message
-from discord.utils import get
-from discord.ext.commands.errors import MissingRole, MissingPermissions, CommandInvokeError
-from discord.errors import Forbidden, NotFound, HTTPException
-from discord.ext import commands
-from discord import client
+from nextcord import (
+    Status, Game, Intents,
+    Member, User, Role,
+    Embed, Color, File,
+    TextChannel, User,
+    SlashOption, Interaction
+)
+from nextcord.ext.commands import Bot, command, has_permissions
+from nextcord.message import Message
+from nextcord.ext.commands.errors import MissingRole, CommandInvokeError
+from nextcord.errors import Forbidden, NotFound, HTTPException
+
 
 print("Papocchio.py")
-token = "ODQ5Njg5ODI0MjgxMTAwMzU4.YLe1UA.k3gP9BEHW26T6hmRm0GMcKu5v1g"
+token = open("token.txt", 'r').read()
 intents = Intents().all()
-prefixes = (")", "()", "<:Papocchio:849018580426555473> ", "<:Papocchio:849018580426555473>", ")(", "@Papocchio#9166", "@Papocchio")
+prefixes = (
+    ")", "()", 
+    "<:Papocchio:849018580426555473> ",
+    "<:Papocchio:849018580426555473>",
+    ")(", "@Papocchio#9166", "@Papocchio"
+)
 owner_ids = [797844636281995274]
-Bot = commands.Bot(command_prefix = prefixes, owner_ids = set(owner_ids), description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia.\n Trovi la mia documentazione con )Documentazione", intents = intents)
-gioco = Game(""")Aiuto | Papocchio | @Papocchio#9166""")
+Papocchio = Bot(
+    command_prefix = prefixes,
+    owner_ids = set(owner_ids),
+    description = "Ciao, sono Papocchio-Bot, mi occupo di gestione nel server di Nonciclopedia.\n Trovi la mia documentazione con )Documentazione",
+    intents = intents
+)
+gioco = Game(")Help | Papocchio | @Papocchio#9166")
 
-@Bot.event
+@Papocchio.event
 async def on_ready():
-    print(Bot.user, " è ora online ", "ID: ", Bot.user.id)
-    await Bot.change_presence(status = Status.online, activity = gioco)
-
-# Encoding functions to avoid using json package
-def CreaFile(File_path:str):
-    try:
-        File = open(File_path, 'w')
-    except PermissionError:
-        raise PermissionError(f"Python CodificaDizionario.py doesn't have the permission to create a file into this directory.")
-    File.close()
-
-def CodificaDizionario(File_path:str, Dizionario:dict):
-    CreaFile(File_path)
-    File = open(File_path, "w+")
-    for i in Dizionario.keys():
-        File.write(i + ' ' + Dizionario[i] + "\n")
-    File.close()
-    File = open(File_path, "r+")
-    return File.read()
-
-def DecodificaDizionario(File_path:str):
-    try:
-        File = open(File_path, "r+")
-    except FileNotFoundError:
-        raise FileNotFoundError(f"File at directory {File_path} doesn't exist.")
-    Codifica = File.read()
-    Codifica = Codifica.split()
-    IndiciChiavi = [i for i in range(len(Codifica)) if (i % 2 == 0)]
-    Chiavi = [Codifica[i] for i in IndiciChiavi]
-    IndiciValori = [i for i in range(len(Codifica)) if (i % 2 == 1)]
-    Valori = [Codifica[i] for i in IndiciValori]
-    File.close()
-    Dizionario = {}
-    for i in range(len(Chiavi)):
-        Dizionario[Chiavi[i]] = Valori[i]
-    return Dizionario
-
-from os import remove
-def EliminaFileSe(File_path:str):
-    try:
-        remove(File_path)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"File at directory {File_path} doesn't exist.")
-    except PermissionError:
-        raise PermissionError(f"Python CodificaDizionario.py doesn't have the permission to delete a file into this directory.")
-
-def EliminaFile(File_path:str):
-    try:
-        remove(File_path)
-    except FileNotFoundError:
-        return
-    except PermissionError:
-        return
-
-from pathlib import Path
-def ControllaPercorso(File_path:str):
-    try:
-        File = open(File_path, 'w')
-    except PermissionError:
-        yield 'PE'
-    except FileNotFoundError:
-        yield 'FNFE'
-    if Path(File_path).is_file():
-        return File_path
-
-def CreaCodifica(File_path, Dizionario):
-    CreaFile(File_path)
-    CodificaDizionario(File_path, Dizionario)
-
-def DecodificaElimina(File_path):
-    DecodificaDizionario(File_path)
-    EliminaFile(File_path)
+    print(Papocchio.user, " è ora online ", "ID: ", Papocchio.user.id)
+    await Papocchio.change_presence(status = Status.online, activity = gioco)
 
 
 #Comandi cazzoni e abbastanza inutili
 
-@Bot.command()
+@Papocchio.command()
 async def Casuale(ctx):
     await ctx.message.delete()
     nonciclopedia = "https://nonciclopedia.org/wiki/Speciale:PaginaCasuale/"
@@ -108,25 +52,25 @@ async def Casuale(ctx):
     await ctx.send(embed=embed)
     await ctx.send(Pagina_Casuale)
 
-@Bot.command()
+@Papocchio.command()
 async def Nonciclopedia(ctx, pagina):
     await ctx.message.delete()
     nonciclopedia = "https://nonciclopedia.org/wiki/"
     await ctx.send(nonciclopedia + pagina)
 
-@Bot.command()
+@Papocchio.command()
 async def Wikipedia(ctx, pagina):
     await ctx.message.delete()
     nonciclopedia = "https://it.wikipedia.org/wiki/"
     await ctx.send(nonciclopedia + pagina)
 
-@Bot.command(description = "Comando per modificare la mia attività per un determinato arco di tempo.")
-@commands.has_permissions(administrator=True)
+@Papocchio.command(description = "Comando per modificare la mia attività per un determinato arco di tempo.")
+@has_permissions(administrator=True)
 async def Cambia_attività(ctx, secondi, *nuova_attività):
     await ctx.message.delete()
     stato = ' '.join(nuova_attività)
     nuovo_stato = Game(str(stato))
-    await Bot.change_presence(status = Status.online, activity = nuovo_stato)
+    await Papocchio.change_presence(status = Status.online, activity = nuovo_stato)
     embed = Embed(description = f"""{ctx.message.author.mention} ha cambiato il mio stato per il tempo di {secondi} secondi.
 Ecco la stronzata che mi ha rifilato come stato:""", color = Color.green())
     await ctx.send(embed = embed)
@@ -134,19 +78,19 @@ Ecco la stronzata che mi ha rifilato come stato:""", color = Color.green())
     await ctx.send(embed = embed)
     tempo = float(secondi)
     await sleep(tempo)
-    await Bot.change_presence(status = Status.online, activity = gioco)
+    await Papocchio.change_presence(status = Status.online, activity = gioco)
 
-@Bot.command(description = "Comando per modificare il mio stato per un determinato arco di tempo.")
-@commands.has_permissions(administrator=True)
+@Papocchio.command(description = "Comando per modificare il mio stato per un determinato arco di tempo.")
+@has_permissions(administrator=True)
 async def Cambia_stato(ctx, secondi:float, stato):
     await ctx.message.delete()
     try:
-        await Bot.change_presence(status = stato_da_nome(stato))
+        await Papocchio.change_presence(status = stato_da_nome(stato))
     except ValueError:
         await ctx.send(embed = Embed(title = "ERRORE", description = f"""{ctx.message.author.mention}, il valore che hai inserito per il parametro stato non è convertibile in uno stato, riprova con un valore più plausibile di "{stato}", grazie"""))
     await ctx.send(embed = Embed(title = stato.upper(), description = f"Ho impostato lo stato {stato} per {round(secondi)} secondi. \n Non chiedetemi perché, qui è {ctx.message.author.mention} che comanda...", color = colore_da_stato(stato)))
     await sleep(secondi)
-    await Bot.change_presence(status = Status.online, activity = gioco)
+    await Papocchio.change_presence(status = Status.online, activity = gioco)
     await ctx.send(embed = Embed(title = "BACK IN GREEN", description = "Dopo aver cambiato stato per {} secondi, sono tornato".format(round(secondi)), color = Color.green()))
 
 def stato_da_nome(stato: str):
@@ -178,18 +122,18 @@ def colore_da_stato(stato):
     else:
         raise ValueError(f"Il valore {stato} non è utilizzabile per il parametro stato")
 
-@Bot.command()
-@commands.has_permissions(send_messages= True)
+@Papocchio.command()
+@has_permissions(send_messages= True)
 async def Stealth(ctx, secondi:float):
     await ctx.message.delete()
     await ctx.send(embed = Embed(title = "STEALTH", description = f"Su ordine di {ctx.message.author.mention} mi fingerò offline per {round(secondi)} secondi", color = Color.default()))
-    await Bot.change_presence(status = Status.invisible, afk=True)
+    await Papocchio.change_presence(status = Status.invisible, afk=True)
     await sleep(secondi)
     await ctx.send(embed = Embed(title = "BACK IN GREEN", description = "Dopo essermi nascosto per {} secondi, sono tornato".format(round(secondi)), color = Color.green()))
-    await Bot.change_presence(status = Status.online, activity = gioco, afk = False)
+    await Papocchio.change_presence(status = Status.online, activity = gioco, afk = False)
     
-@Bot.command(description = "Un messaggio in anonimo per rompere il cazzo al deficiente di turno.")
-@commands.has_permissions(mention_everyone=True)
+@Papocchio.command(description = "Un messaggio in anonimo per rompere il cazzo al deficiente di turno.")
+@has_permissions(mention_everyone=True)
 async def Anonimo(ctx, utonto:Member, *Messaggio):
     await ctx.message.delete()
     messaggio = str('')
@@ -205,8 +149,8 @@ async def Anonimo(ctx, utonto:Member, *Messaggio):
 
 global offese
 offese = ["vorrei trombarmi tua cugina (perché non c'è cosa più divina), vuoi farti da parte?", "sei così orripilante che in confronto <:jumboface:845028213910798346> è sexy", "tua sorella è così zoccola che Berlusconi le ha dato un posto al senato", "ce l'hai corto",  "tua madre si sta ancora pentendo del mancato aborto", "sei così brutto che se mai avrai una ragazza dovrà essere così miope da poterti scambiare per un rettile", "parli come un'aspirante Barbara d'Urso"]
-@Bot.command(aliases = ["offendi"])
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(aliases = ["offendi"])
+@has_permissions(send_messages=True)
 async def Offendi(ctx, utente: User):
     try:
         await ctx.message.delete()
@@ -214,8 +158,8 @@ async def Offendi(ctx, utente: User):
     except MissingRole:
         await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo nonciclopediano verificato")
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Aggiungi_offesa(ctx, *Offesa):
     await ctx.message.delete()
     offesa = ' '.join(Offesa)
@@ -230,8 +174,8 @@ async def Aggiungi_offesa(ctx, *Offesa):
     except MissingRole:
         await ctx.message.reply(f"{ctx.message.author.mention}, mi dispiace, ma per eseguire questo comando è necessario il ruolo di nonciclopediano verificato")
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Lista_offese(ctx):
     await ctx.message.delete()
     colore = Color.random()
@@ -240,8 +184,8 @@ async def Lista_offese(ctx):
     await ctx.message.author.send(embed = Embed(description = "Hai richiesto la lista delle offese", title = "LISTA OFFESE", color = colore))
     await ctx.message.author.send(embed = Embed(description = f"*{offese}*", color = colore))
 
-@Bot.command(aliases = ["scrivi"])
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(aliases = ["scrivi"])
+@has_permissions(send_messages=True)
 async def Scrivi(ctx, *parole):
     await ctx.message.delete()
     frase = str('')
@@ -250,8 +194,8 @@ async def Scrivi(ctx, *parole):
         frase += parola
     await ctx.send(frase)
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Scrivi_con_attesa(ctx, secondi:float, *parole):
     await ctx.message.delete()
     frase = ' '.join(parole)
@@ -259,8 +203,8 @@ async def Scrivi_con_attesa(ctx, secondi:float, *parole):
         await sleep(secondi)
     await ctx.send(frase)
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Scrivi_a_velocità(ctx, caratteri_al_secondo: int, *parole):
     parole = ' '.join(parole)
     await ctx.message.delete()
@@ -269,8 +213,8 @@ async def Scrivi_a_velocità(ctx, caratteri_al_secondo: int, *parole):
             await sleep(1/caratteri_al_secondo)
     await ctx.send(parole)
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Scrivi_come_utente(ctx, *parole):
     await ctx.message.delete()
     frase = ' '.join(parole)
@@ -279,14 +223,14 @@ async def Scrivi_come_utente(ctx, *parole):
         await sleep(secondi)
     await ctx.send(frase)
 
-@Bot.command(aliases = ["cancella"])
-@commands.has_permissions(manage_messages=True)
+@Papocchio.command(aliases = ["cancella"])
+@has_permissions(manage_messages=True)
 async def Cancella(ctx, quantità: int):
     await ctx.channel.purge(limit = quantità)
     await ctx.send(embed = Embed(description = f"Sono stati eliminati {quantità} messaggi per conto di {ctx.message.author.mention}!", color = Color.blurple()))
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Spam(ctx, ripetizioni: int, *parole):
     await ctx.message.delete()
     frase = ' '.join(parole)
@@ -295,8 +239,8 @@ async def Spam(ctx, ripetizioni: int, *parole):
             await ctx.send(frase)
     await ctx.send(embed = Embed(description = f"Spam di {ripetizioni} messaggi effettuata per conto di {ctx.message.author.mention}"))
 
-@Bot.command(aliases = ["Embed"], description = "Invia un embed per conto di un nonciclopediano. Il colore va codificato in RGB. L'immagine va scritta come link. Il file dev'essere presente nel dispositivo dell'host..")
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(aliases = ["Embed"], description = "Invia un embed per conto di un nonciclopediano. Il colore va codificato in RGB. L'immagine va scritta come link. Il file dev'essere presente nel dispositivo dell'host..")
+@has_permissions(send_messages=True)
 async def EMBED(ctx, titolo:str, descrizione:str, colore = None, immagine = None, file = None, nome_file = None):
     await ctx.message.delete()
     titolo = titolo.replace('-', ' ')
@@ -317,7 +261,7 @@ async def EMBED(ctx, titolo:str, descrizione:str, colore = None, immagine = None
     await ctx.send(embed = embed)
     await ctx.message.author.send(embed = Embed(title = "EMBED", description =f"{ctx.message.author.mention}, ho inviato nel canale {ctx.channel} il tuo embed"))
 
-@Bot.command()
+@Papocchio.command()
 async def HelloWorld(ctx, linguaggio: str):
     await ctx.message.delete()
     
@@ -337,8 +281,8 @@ async def HelloWorld(ctx, linguaggio: str):
     embed = Embed(title = linguaggio, description = script)
     await ctx.send(embed = embed)
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Attacca(ctx, ID:int):
     await ctx.message.delete()
     messaggio = await ctx.fetch_message(ID)
@@ -384,7 +328,7 @@ def Informazioni_messaggio_offline(messaggio: Message):
     
     return informazioni
 
-@Bot.command()
+@Papocchio.command()
 async def Informazioni_messaggio(ctx, ID: int) -> (bool | None):
     await ctx.message.delete()
     try:
@@ -400,13 +344,13 @@ async def Informazioni_messaggio(ctx, ID: int) -> (bool | None):
         return False
     await ctx.send(embed=embed)
 
-@Bot.command()
+@Papocchio.command()
 async def Digita(ctx, secondi: float):
     await ctx.message.delete()
     async with ctx.typing():
         await sleep(secondi)
 
-@Bot.command()
+@Papocchio.command()
 async def LegalizeDrugsAndMurder(ctx):
     await ctx.message.delete()
     embed = Embed(title = "LEGALIZE DRUGS AND MURDER")
@@ -415,25 +359,24 @@ async def LegalizeDrugsAndMurder(ctx):
 
 global Roberta_Sammarelli
 Roberta_Sammarelli = ['https://lightstorage.ecodibergamo.it/mediaon/cms.quotidiani/storage/site_media/media/photologue/2016/10/7/photos/cache/a-cena-con-roberta-sammarelli_51915_display.jpg', 'http://baraonda.radiondadurto.org/files/2013/04/1roberta.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/RobertaSammarelli.jpg/1200px-RobertaSammarelli.jpg', 'https://www.nikonclub.it/forum/uploads//201601/appBig_e9d2aa6828bf99cf6900693b4a720bb2.jpg', 'https://rockitecn.nohup.it/fotouser/102895/verdena-roberta-sammarelli.jpg', 'https://images2-bergamo.corriereobjects.it/methode_image/2015/08/27/Bergamo/Foto%20Bergamo%20-%20Trattate/verdena-kTt-U43110492147391zcE-1224x916@Corriere-Web-Bergamo-593x443.jpg?v=20150827161913', 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3069b23-a844-4f45-8589-f32f580706ba/d11c0k7-006f5360-3b88-4f3e-9298-7986167e422f.jpg/v1/fill/w_600,h_801,q_75,strp/roberta_sammarelli_by_veergilicious_d11c0k7-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODAxIiwicGF0aCI6IlwvZlwvYjMwNjliMjMtYTg0NC00ZjQ1LTg1ODktZjMyZjU4MDcwNmJhXC9kMTFjMGs3LTAwNmY1MzYwLTNiODgtNGYzZS05Mjk4LTc5ODYxNjdlNDIyZi5qcGciLCJ3aWR0aCI6Ijw9NjAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.EcugiTErOSgl4HH41BB5EAhKBw9TC14jwzEO_koxxpU', 'https://live.staticflickr.com/6073/6086307279_6812bdf2cd_b.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMaIcXR2gcYnENaBcYgZfvhdxSxQfecLtG4Q&usqp=CAU', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs4tYJmoLnvGx6bacbc4XMEw80cIg7lJL3og&usqp=CAU', 'https://upload.wikimedia.org/wikipedia/commons/8/80/Roberta_Sammarelli_-_Modena_19-09-2007.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnhU5tMTkOEF8KlOi3L5dmf26ZyM3sDsXE6Q&usqp=CAU', 'https://rockitecn.nohup.it/fotouser/102918/verdena-roberta-sammarelli.jpg?v=843', 'http://2.bp.blogspot.com/-PLn-AtMJB5k/Vd8Oh4noIYI/AAAAAAAA3V4/vnjWHI28ofc/s1600/foto.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2NZQKsmu7yNLbVZsyWcQIDq-qqmPQCgedow&usqp=CAU']
-@Bot.command()
-async def RobertaSammarelli(ctx):
-    await ctx.message.delete()
+@Papocchio.slash_command(name="robertasammarelli", description="Roberta Sammarelli, pronta per l'invio.")
+async def RobertaSammarelli(interaction: Interaction):
     embed = Embed(title = "ROBERTA SAM(M)ARELLI")
     global Roberta_Sammarelli
     url = choice(Roberta_Sammarelli)
     embed.set_image(url = url)
-    embed.set_footer(text = f"Per {ctx.message.author.nick} con amore", icon_url = url)
-    await ctx.send(embed = embed)
+    embed.set_footer(text = f"Per {interaction.user.nick} con amore", icon_url = url)
+    await interaction.channel.send(embed = embed)
 
-@Bot.command()
+@Papocchio.command()
 async def Caparezza(ctx):
     await ctx.message.delete()
     embed = Embed(title = "CAPAREZZA ||tutt'altro che una carezza||")
     embed.set_image(url = choice(['https://cdn.discordapp.com/attachments/851839196742287380/869931327334518784/caparezza.png', 'https://cdn.discordapp.com/attachments/851839196742287380/869930713049354240/caparezza.png', 'https://cdn.discordapp.com/attachments/851839196742287380/869930601128546314/hqdefault.png', 'https://media.discordapp.net/attachments/851839196742287380/869929953314095114/image.png?width=320&height=320', 'https://notiziemusica.it/wp-content/uploads/2018/02/CS_CAPAREZZA.jpg.webp', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Caparezza_Italia_Wave.jpg/220px-Caparezza_Italia_Wave.jpg', 'https://www.alguer.it/img/Caparezza-3.jpg', 'https://sites.google.com/site/patagarruconiriccioli/_/rsrc/1461764265458/il-nuovo-caparezza/capa2.jpg', 'https://www.studionord.news/wp-content/uploads/2018/03/Caparezza.jpg']))
     await ctx.send(embed = embed)
 
-@Bot.command()
-@commands.has_permissions(read_message_history=True)
+@Papocchio.command()
+@has_permissions(read_message_history=True)
 async def Messaggi(ctx, utente: Member, canale: TextChannel, quantità: int):
     await ctx.message.delete()
     messaggio = await canale.send(embed = Embed(title = "LEGGENDO...", description = f"Sto leggendo {quantità} messaggi al posto di {ctx.message.author.mention}, che non ha voglia di farlo.", color = Color.green()))
@@ -450,8 +393,8 @@ async def Messaggi(ctx, utente: Member, canale: TextChannel, quantità: int):
 from asyncio import create_task, wait, FIRST_COMPLETED
 from datetime import datetime
 from typing import Iterable
-@Bot.command(description = "Spiare un utente in ogni cosa che fa, dall'andare online fino al modificarsi il nickname, passando dal digitare sulla tastiera e dall'aprire spotify.")
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(description = "Spiare un utente in ogni cosa che fa, dall'andare online fino al modificarsi il nickname, passando dal digitare sulla tastiera e dall'aprire spotify.")
+@has_permissions(send_messages=True)
 async def Spia(ctx, utente: Member):
     autore = ctx.message.author
     await ctx.message.delete()
@@ -459,7 +402,7 @@ async def Spia(ctx, utente: Member):
     await autore.send(embed = Embed(description = f"Per terminare questo pedinamento, scrivi 'Smettila di spiarlo' dove posso leggerlo.\n Il messaggio verrà immediatamente eliminato e smetterai di ricevere notifiche.", color = Color.default()))
 
     async def wait_for_event(event, **options):
-        args = await Bot.wait_for(event, **options)
+        args = await Papocchio.wait_for(event, **options)
         if not isinstance(args, Iterable):
             args = [args]
         return event, *args
@@ -526,91 +469,9 @@ async def Spia(ctx, utente: Member):
                 await autore.send(embed = Emb)
                 return
 
-#Comandi legati ai CA$H
-global Soldi
-Soldi = DecodificaDizionario(r"Soldi.txt")
-
-@Bot.command()
-@commands.has_permissions(send_messages=True)
-async def IniziaEconomia(ctx):
-    await ctx.message.add_reaction("<:Papocchio:849018580426555473>")
-    await ctx.send(embed = Embed(title = f"I SOLDI DI {ctx.message.author}", description = f"""{ctx.message.author.mention} si è voluto condannare a diventare un poveraccio.\n Per cominciare gli darò 200 sacchi.""", color = Color.green()))
-    global Soldi
-    Soldi[str(ctx.message.author.nick+ctx.message.author.discriminator)] = 200
-
-@Bot.command()
-@commands.has_permissions(send_messages=True)
-async def Conto(ctx, utente:Member = None):
-    await ctx.message.delete()
-    global Soldi
-    if utente == None:
-        soldi = Soldi[ctx.message.author.nick+ctx.message.author.discriminator]
-        await ctx.send(embed = Embed(title = f"{ctx.message.author.nick}", description = f"**{soldi}£**"))
-    else:
-        soldi = Soldi[utente.nick+utente.discriminator]
-        await ctx.send(embed = Embed(title = f"{utente.nick}", description = f"**{soldi}£**"))
-
-@Bot.command()
-@commands.has_permissions(administrator=True)
-async def AggiungiSoldi(ctx, utente:Member, quantità:float): #Prossimamente aggiungere i try-except
-    await ctx.message.delete()
-    global Soldi
-    Soldi[utente.nick+utente.discriminator] += quantità
-    await ctx.send(embed = Embed(title = "CACC'E SORDI!", description = f"Oggi {ctx.message.author.mention} sbanca.\n Molla giù {round(quantità)} dollaroni a {utente.mention}.", color = Color.green()))
-
-@Bot.command()
-@commands.has_permissions(administrator=True)
-async def DaiSoldi(ctx, utente:Member, quantità:float): #Aggiungere i try-except
-    await ctx.message.delete()
-    global Soldi
-    Soldi[utente.nick+utente.discriminator] += quantità
-    Soldi[ctx.message.author.nick+ctx.message.author.discriminator] += -quantità
-    await ctx.send(embed = Embed(title = "L'INFLAZIONE DILAGA!", description = f"{ctx.message.author.mention} ha deciso di coniare moneta.\n Sto giro tanto {utente.mention} si fotte tutti i {round(quantità)} soldoni...", color = Color.green()))
-
-@Bot.event
-async def on_user_update(prima, dopo): #Questo serve per aggiornare il dizionario Soldi ogni volta che un utente cambia nickname o discriminatore
-    pass
-
-@Bot.event
-async def on_member_update(prima, dopo):
-    pass
-
-@Bot.command()
-@commands.is_owner()
-async def ResettaEconomia(ctx):
-    await ctx.message.reply(embed = Embed(title = "OCCHIO!", description = f"Sei proprio sicuro sicuro di volerlo fare?\n Perderai tutti i dati degli utenti, di questo e altri server!\n Scrivi **Sì** per confermare, **No** per annullare.", color = Color.red()))
-    while True:
-        messaggio = Bot.wait_for('message')
-        if (messaggio.author == ctx.message.author):
-            break
-    if (messaggio.content in ["Sì", "sì", "Si", "si"]):
-        if (messaggio.author == ctx.message.author):
-            ResetEconomy(True)
-            await ctx.send(embed = Embed(title = "ECONOMIA A PUTTANE!", description = f"{messaggio.author.mention} ha azzerato i soldi di ognuno. Peggio di Berlusconi al governo!", color = Color.red()))
-            return
-        else:
-            await messaggio.reply(f"{messaggio.author.mention}, ma chi te l'ha chiesto?")
-    if (messaggio.content in ["No", "no"]):
-        if (messaggio.author == ctx.message.author):
-            await messaggio.reply(embed = Embed(description = "Confesserò che da te me l'aspettavo."))
-            return
-        else:
-            await messaggio.reply(f"{messaggio.author.mention}, ma chi te l'ha chiesto?")
-
-def ResetEconomy(Sicurissimo: bool = None):
-    if (Sicurissimo == None):
-        Sicurissimo = False
-    if (Sicurissimo):
-        global Soldi
-        CreaCodifica(r"D:\Documenti\TXT\Archivio Soldi.txt", Soldi)
-        Soldi = {}
-        return True
-    if not(Sicurissimo):
-        return False
-
 #Comandi tattici per la gestione dei nonciclopediani
 
-@Bot.command()
+@Papocchio.command()
 async def Permessi(ctx, utente: Member):
     await ctx.message.delete()
     p = utente.guild_permissions
@@ -642,8 +503,8 @@ async def Permessi(ctx, utente: Member):
 
 #Aggiungere qui un comando riguardo le informazioni di un singolo utente
 
-@Bot.command(description = "Decidi quante notifiche mandare per rompere il cazzo allo sfortunato di turno. Se non specificherai un numero allora sarò costretto a deciderlo io...")
-@commands.has_permissions(send_messages=True, mention_everyone=True)
+@Papocchio.command(description = "Decidi quante notifiche mandare per rompere il cazzo allo sfortunato di turno. Se non specificherai un numero allora sarò costretto a deciderlo io...")
+@has_permissions(send_messages=True, mention_everyone=True)
 async def Importuna(ctx, utonto: Member, ripetizioni = None, *messaggio_privato):
     await ctx.message.delete()
     if (ripetizioni == None):
@@ -681,8 +542,8 @@ async def Importuna(ctx, utonto: Member, ripetizioni = None, *messaggio_privato)
 > *{messaggio}*""", color = Color.red()))
         return
 
-@Bot.command()
-@commands.has_permissions(send_messages=True, mention_everyone=True)
+@Papocchio.command()
+@has_permissions(send_messages=True, mention_everyone=True)
 async def Avvertimento(ctx, utente: Member, motivo = None):
     try:
         if motivo == None:
@@ -695,8 +556,8 @@ async def Avvertimento(ctx, utente: Member, motivo = None):
     except Forbidden:
         await ctx.message.reply(f'{ctx.message.author.mention}, non ho il potere di farlo')
 
-@Bot.command()
-@commands.has_permissions(administrator=True)
+@Papocchio.command()
+@has_permissions(administrator=True)
 async def Calciorotazione(ctx, utente: Member, *Motivo):
     await ctx.message.delete()
     if (Motivo != None):
@@ -716,8 +577,8 @@ async def Calciorotazione(ctx, utente: Member, *Motivo):
     if (Motivo == None):
         await utente.send(embed = Embed(description = f"Sei stato espulso dal server perché così sbatteva a {ctx.message.author.mention}", color = Color.dark_orange()))
 
-@Bot.command(description = "Per dare un po' di tempo al ciccione di turno per lamentarsi dell'espulsione in avvicinamento. Inserire un tempo minimo di 15 secondi.", aliases = ["CCC"])
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(description = "Per dare un po' di tempo al ciccione di turno per lamentarsi dell'espulsione in avvicinamento. Inserire un tempo minimo di 15 secondi.", aliases = ["CCC"])
+@has_permissions(send_messages=True)
 async def Calciorotazione_con_countdown(ctx, utente: Member, secondi: float, motivo = None, offesa = None):
     await ctx.message.delete()
     if (secondi != None):
@@ -744,8 +605,8 @@ async def Calciorotazione_con_countdown(ctx, utente: Member, secondi: float, mot
             await ctx.send(embed = Embed(description = f"Purtroppo però non ci sono riuscito...", color = Color.red()))
         return
 
-@Bot.command(aliases = ["AR", "aggiungi_ruolo", "Aggiungi_ruolo"])
-@commands.has_permissions(manage_roles=True)
+@Papocchio.command(aliases = ["AR", "aggiungi_ruolo", "Aggiungi_ruolo"])
+@has_permissions(manage_roles=True)
 async def Aggiungi_Ruolo(ctx, ruolo: Role, utente: Member):
     await ctx.message.delete()
     try:
@@ -755,8 +616,8 @@ async def Aggiungi_Ruolo(ctx, ruolo: Role, utente: Member):
         return
     await ctx.send(embed = Embed(description = f"Ho aggiunto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.green()))
 
-@Bot.command(aliases = ["RR", "rimuovi_ruolo", "Rimuovi_ruolo"])
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(aliases = ["RR", "rimuovi_ruolo", "Rimuovi_ruolo"])
+@has_permissions(send_messages=True)
 async def Rimouvi_Ruolo(ctx, ruolo: Role, utente: Member):
     await ctx.message.delete()
     try:
@@ -766,8 +627,8 @@ async def Rimouvi_Ruolo(ctx, ruolo: Role, utente: Member):
         return
     await ctx.send(embed = Embed(description = f"Ho tolto il ruolo {ruolo.mention} a {utente.mention} su richesta di {ctx.message.author.mention}", color = Color.red()))
 
-@Bot.command(description = "Con questo comando puoi fare una gentile concessione al nonciclopediano di turno, regalandogli per un numero di secondi limitato un ruolo a tua scelta, di modo da capire fino a che punto possa esserne immeritevole")
-@commands.has_permissions(manage_roles=True)
+@Papocchio.command(description = "Con questo comando puoi fare una gentile concessione al nonciclopediano di turno, regalandogli per un numero di secondi limitato un ruolo a tua scelta, di modo da capire fino a che punto possa esserne immeritevole")
+@has_permissions(manage_roles=True)
 async def Concessione(ctx, ruolo: Role, utente: Member, secondi: float):
     await ctx.message.delete()
     try:
@@ -782,112 +643,42 @@ Goditelo, perché tra {secondi} secondi non sarà più tuo.""", color = Color.da
     await ctx.send(embed = Embed(description = f"{utente.mention}, spero che tu ti sia divertito finché sei stato {ruolo.mention}, perché i {secondi} secondi gentilmente concessi da {ctx.message.author.mention} sono scaduti, e mo' t'attacchi al cazzo.", color = Color.dark_green()))
     await utente.remove_roles(ruolo)
 
-@Bot.command()
-async def ImpostaCanaleSegnalazioni(ctx):
-    await ctx.message.delete()
-    Canali = DecodificaDizionario(r"D:\\Python\Python\Variables\CanaliSegnalazioni.json")
-    Canali[ctx.guild.id] = ctx.channel.id
-    CodificaDizionario(r"D:\\Python\Python\Variables\CanaliSegnalazioni.json", Canali)
-    await ctx.send(
-        embed=Embed(
-            title="Canale impostato",
-            description=f"Questo canale, per questo server, sarà il predefinito per le segnalazioni.",
-            color=Color.default()
-            )
-        )
-
-@Bot.command(description="Segnala un vandalo!")
-async def Vandalo(ctx, nick_o_id: str):
-    await ctx.message.delete()
-    colore = Color.default()
-    await ctx.send(embed=Embed(title="Segnalazione", description=f"Il nostro caro {ctx.message.author.mention} vuole segnalare un vandalo.\n Il nickname del disgraziato è {nick_o_id}\n La sua pagina utente è https://nonciclopedia.org/wiki/Utente:{nick_o_id}", color=colore))
-    await ctx.send(f"{ctx.message.author.mention}, qual è il motivo della segnalazione?")
-    while True:
-        motivo = await Bot.wait_for("message")
-        if motivo.author == ctx.message.author:
-            break
-    await motivo.reply(embed=Embed(description="Bene, il motivo è stato registrato.\n Ora il template `{{Banna}}` è stato compilato."))
-    canale = DecodificaDizionario(r"D:\\Python\Python\Variables\CanaliSegnalazioni.json")
-    canale = canale[str(ctx.guild.id)]
-    canale = await Bot.fetch_channel(canale)
-    await canale.send(
-            embed=Embed(
-                title="Segnalazione",
-                description=str(
-                    "`{{"
-                    + f"Banna|{nick_o_id}|motivo={motivo.content}|firma=--~~~~"
-                    + "}}`"
-                    ),
-                color=colore
-                )
-            )
-
-@Bot.command()
-async def CancellaSubito(ctx, pagina: str):
-    await ctx.message.delete()
-    colore = Color.default()
-    await ctx.send(embed=Embed(title="Segnalazione", description=f"Il nostro caro {ctx.message.author.mention} vuole segnalare una pagina da calciorotare subito.", color=colore))
-    await ctx.send(f"https://nonciclopedia.org/wiki/{pagina}")
-    emb = Embed(title="Criteri", description="Scegli il giusto criterio di cancellazione, indicandone il numero", color=colore)
-    file = File(r"C:\Users\matti\OneDrive\Immagini\Catture di schermata\Screenshot (58).png", filename="Tua madre me la lecca.png")
-    await ctx.send(embed=emb, file=file)
-    while True:
-        motivo = await Bot.wait_for("message")
-        if motivo.author == ctx.message.author:
-            break
-    await motivo.reply(embed=Embed(description="Il motivo è stato registrato. Indica ora una descrizione del problema."))
-    while True:
-        descrizione = await Bot.wait_for("message")
-        if descrizione.author == ctx.message.author:
-            break
-    await descrizione.reply(embed=Embed(description="Bene, la descrizione è stata registrata.\n Ora il template `{{Cancella subito}}` è stato compilato."))
-    canale = await Bot.fetch_channel(DecodificaDizionario(r"D:\\Python\Python\Variables\CanaliSegnalazioni.json")[str(ctx.guild.id)])
-    await canale.send(embed=Embed(
-                title="Segnalazione",
-                description=str(
-                    "`{{"
-                    + f"Cancella subito|{motivo.content}|{descrizione.content}"
-                    + "}}`"
-                    ),
-                color=colore))
 
 #Comandi sulla gestione del Bot
 
-@Bot.command(aliases = ["KillYourself", "Suicide"])
-@commands.has_permissions(administrator=True)
+@Papocchio.command(aliases = ["KillYourself", "Suicide"])
+@has_permissions(administrator=True)
 async def FERMO(ctx):
     await ctx.message.delete()
     await ctx.send(embed = Embed(description = f'Hai usato il comando `)FERMO`, il mio programma in file `.exe` si arresterà in automatico, per riattivarmi contatta `@FLAK_FLAK#3241`', color = Color.default(), title = f"{ctx.message.author.nick} MI HA FERMATO"))
-    EliminaFile(r"D:\Documenti\TXT\Soldi.txt")
-    CreaCodifica(r"D:\Documenti\TXT\Soldi.txt", Soldi)
     await quit()
 
-@Bot.command()
-@commands.has_permissions(manage_guild=True)
+@Papocchio.command()
+@has_permissions(manage_guild=True)
 async def SPENTO(ctx, secondi:float):
     await ctx.message.delete()
     embed = Embed(title = "SPENTO", description = f"{ctx.message.author.mention} mi ha spento per {round(secondi)} secondi", color = Color.red())
     await ctx.send(embed = embed)
-    await Bot.close()
+    await Papocchio.close()
     await sleep(secondi)
-    await Bot.login(token)
+    await Papocchio.login(token)
     embed = Embed(title = "ACCESO", description = f"Sono tornato dal letargo di {round(secondi)} impostomi da {ctx.message.author.mention}", color = Color.green())
     await ctx.send(embed = embed)
     
 #Comandi sulle informazioni
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Prefissi(ctx): #Da incorporare in un comando )Informazioni_Bot
     await ctx.message.delete()
     await ctx.send(embed = Embed(title = "PREFISSI", description = f"{ctx.message.author.mention}, eccoti i miei prefissi:"))
     await ctx.send(embed = Embed(description = prefixes))
 
-@Bot.command(aliases = ["info", "Info", "informazioni"], description = "Le informazioni fondamentali del Bot.")
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(aliases = ["info", "Info", "informazioni"], description = "Le informazioni fondamentali del Papocchio.")
+@has_permissions(send_messages=True)
 async def Informazioni(ctx): #Andrà ampliato con informazioni sul bot stesso
     await ctx.message.delete()
-    numero_server = len(Bot.guilds)
+    numero_server = len(Papocchio.guilds)
     quantità_utenti = len(ctx.guild.members)
     quantità_ruoli = len(ctx.guild.roles)
     color = Color.random()
@@ -908,21 +699,21 @@ Trovi la lista dei ruoli con `)Lista_ruoli`"""
     embed = Embed(description = description, title = title, color = color)
     await ctx.send(embed = embed)
 
-@Bot.command(description = "Lista dei server dei quali faccio parte.")
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(description = "Lista dei server dei quali faccio parte.")
+@has_permissions(send_messages=True)
 async def Lista_server(ctx):
     await ctx.message.delete()
-    numero_server = len(Bot.guilds)
+    numero_server = len(Papocchio.guilds)
     color = Color.purple()
     await ctx.send(embed = Embed(description = f"{ctx.message.author.mention}, eccoti la lista dei {numero_server} server dei quali faccio parte:", color = color))
     Lista = ""
-    for guild in Bot.guilds:
+    for guild in Papocchio.guilds:
         Lista += f"""{guild.name}
 """
     await ctx.send(embed = Embed(description = Lista, color = color, title = "LISTA SERVER"))
 
-@Bot.command(description = "Lista degli utenti di questo server.")
-@commands.has_permissions(send_messages=True)
+@Papocchio.command(description = "Lista degli utenti di questo server.")
+@has_permissions(send_messages=True)
 async def Lista_utenti(ctx):
     await ctx.message.delete()
     numero_utenti = len(ctx.guild.members)
@@ -938,8 +729,8 @@ async def Lista_utenti(ctx):
 """
     await ctx.send(embed = Embed(description = Lista, color = color, title = "LISTA UTENTI"))
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Lista_ruoli(ctx):
     await ctx.message.delete()
     color = Color.purple()
@@ -949,21 +740,20 @@ async def Lista_ruoli(ctx):
         Lista += f"{role.mention}\n"
     await ctx.send(embed = Embed(description = Lista, color = color))
 
-@Bot.command()
-@commands.has_permissions(send_messages=True)
+@Papocchio.command()
+@has_permissions(send_messages=True)
 async def Documentazione(ctx):
     await ctx.message.delete()
     messaggio = f"""{ctx.message.author.mention} ha richiesto il mio codice sorgente:
 https://github.com/FLAK-ZOSO/Discord.py/blob/Papocchio/Papocchio.py"""
     await ctx.send(embed = Embed(title = "DOCUMENTAZIONE", description = messaggio, color = Color.lighter_gray()))
     await ctx.message.author.send(embed = Embed(title = "DOCUMENTAZIONE", description = "Hai richiesto il mio file sorgente, te lo invio qui sotto.", color = Color.lighter_gray()))
-    await ctx.message.author.send(file = File(r"C:\Users\mattia\papocchio.py"))
+    await ctx.message.author.send(file = File(r"Papocchio.py"))
     print(f"{ctx.message.author} ha richiesto la mia documentazione")
     await sleep(15)
     embed = Embed(title = "ATTENZIONE", description = "Se fai stronzate col mio token lo verrò a sapere, il Papocchio ti osserva:", color = Color.red())
     embed.set_image(url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
     await ctx.message.author.send(embed = embed)
 
-#try:
-Bot.run(token)
-#except ConnectionError:
+
+Papocchio.run(token)
