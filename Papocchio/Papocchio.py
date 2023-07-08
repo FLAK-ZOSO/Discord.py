@@ -1,3 +1,4 @@
+import os, sys, json
 from random import choice, randint
 from asyncio import sleep
 from nextcord import (
@@ -8,7 +9,7 @@ from nextcord import (
     SlashOption, Interaction
 )
 from nextcord.ext.commands import Bot, command, has_permissions
-from nextcord.message import Message
+from nextcord.message import Message, MessageReference
 from nextcord.ext.commands.errors import MissingRole, CommandInvokeError
 from nextcord.errors import Forbidden, NotFound, HTTPException
 
@@ -754,6 +755,43 @@ https://github.com/FLAK-ZOSO/Discord.py/blob/Papocchio/Papocchio.py"""
     embed = Embed(title = "ATTENZIONE", description = "Se fai stronzate col mio token lo verrò a sapere, il Papocchio ti osserva:", color = Color.red())
     embed.set_image(url = "https://static.miraheze.org/nonciclopediawiki/c/cd/Papocchio_2000x2000.png")
     await ctx.message.author.send(embed = embed)
+
+
+# Comando "STOCAZZO" e correlati
+@Papocchio.slash_command(name="inizializza", description = "Inizializza una sezione di memoria per il server corrente volta all'uso comando /stocazzo e non solo")
+async def inizializzaGuild(interaction: Interaction) -> None:
+    try:
+        os.makedirs(fr"guilds/{interaction.guild.id}")
+    except OSError:
+        interaction.response.send_message("Il server è già inizializzato per Papocchio", ephemeral=True)
+    open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json", "w").write("{}")
+    await interaction.response.send_message("Inizializzazione completata", ephemeral=True)
+
+
+@Papocchio.slash_command(name="maleduca", description = "Aggiunge una risposta maleducata alla memoria del server")
+async def aggiungiRispostaMaleducata(interaction: Interaction, risposta: str, innesco: str) -> None:
+    try:
+        risposteMaleducate = json.load(open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json"))
+    except FileNotFoundError:
+        interaction.response.send_message("Il server non è inizializzato per Papocchio", ephemeral=True)
+    risposteMaleducate[innesco] = risposta
+    json.dump(risposteMaleducate, open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json", "w"))
+    await interaction.response.send_message("Risposta maleducata aggiunta", ephemeral=True)
+
+
+@Papocchio.slash_command(name="rispondi", description = "Risponde (maleducatamente) a un messaggio")
+async def rispondiMaleducatamente(interaction: Interaction, id_messaggio: str, risposta: str) -> None:
+    # Get the message and answer to it
+    messaggio = await interaction.channel.fetch_message(id_messaggio.split('-')[1])
+    await messaggio.reply(risposta)
+    await interaction.response.send_message("Risposta inviata", ephemeral=True)
+
+
+@Papocchio.slash_command(name="stocazzo", description = "Risponde (maleducatamente) a un messaggio")
+async def stocazzalo(interaction: Interaction, id_messaggio: str) -> None:
+    messaggio = await interaction.channel.fetch_message(id_messaggio.split('-')[1])
+    await messaggio.reply("**STOCAZZO!**")
+    await interaction.response.send_message("stocazzo inviato", ephemeral=True)
 
 
 Papocchio.run(token)
