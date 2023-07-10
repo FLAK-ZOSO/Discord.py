@@ -778,7 +778,7 @@ async def aggiungiRispostaMaleducata(interaction: Interaction, risposta: str, in
     try:
         risposteMaleducate = json.load(open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json"))
     except FileNotFoundError:
-        interaction.response.send_message("Il server non è inizializzato per Papocchio", ephemeral=True)
+        await interaction.response.send_message("Il server non è inizializzato per Papocchio", ephemeral=True)
     risposteMaleducate[innesco.lower()] = risposta
     rispostacce[interaction.guild.id] = risposteMaleducate
     json.dump(risposteMaleducate, open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json", "w"))
