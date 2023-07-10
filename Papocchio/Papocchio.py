@@ -32,10 +32,15 @@ Papocchio = Bot(
 )
 gioco = Game(")Help | Papocchio | @Papocchio#9166")
 
+rispostacce: dict[int, dict[str, str]] = {}
 @Papocchio.event
 async def on_ready():
     print(Papocchio.user, " è ora online ", "ID: ", Papocchio.user.id)
     await Papocchio.change_presence(status = Status.online, activity = gioco)
+    for directory in os.listdir("guilds"):
+        for file in os.listdir(f"guilds/{directory}"):
+            with open(f"guilds/{directory}/risposteMaleducate.json", "r") as f:
+                rispostacce[int(directory)] = json.load(f)
 
 
 #Comandi cazzoni e abbastanza inutili
@@ -774,7 +779,8 @@ async def aggiungiRispostaMaleducata(interaction: Interaction, risposta: str, in
         risposteMaleducate = json.load(open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json"))
     except FileNotFoundError:
         interaction.response.send_message("Il server non è inizializzato per Papocchio", ephemeral=True)
-    risposteMaleducate[innesco] = risposta
+    risposteMaleducate[innesco.lower()] = risposta
+    rispostacce[interaction.guild.id] = risposteMaleducate
     json.dump(risposteMaleducate, open(fr"guilds/{interaction.guild.id}/risposteMaleducate.json", "w"))
     await interaction.response.send_message("Risposta maleducata aggiunta", ephemeral=True)
 
@@ -792,6 +798,13 @@ async def stocazzalo(interaction: Interaction, id_messaggio: str) -> None:
     messaggio = await interaction.channel.fetch_message(id_messaggio.split('-')[1])
     await messaggio.reply("**STOCAZZO!**")
     await interaction.response.send_message("stocazzo inviato", ephemeral=True)
+
+
+@Papocchio.event
+async def on_message(message: Message):
+    regole = rispostacce[message.guild.id]
+    if message.content.strip().lower() in regole.keys():
+        await message.reply(regole[message.content.strip().lower()])
 
 
 Papocchio.run(token)
